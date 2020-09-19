@@ -1,0 +1,241 @@
+<head>
+    <meta charset="utf-8">
+    <title>西行记自动构建</title>
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="full-screen" content="true" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="360-fullscreen" content="true" />
+    <style>
+        html,
+        body {
+            -ms-touch-action: none;
+            padding: 0;
+            border: 0;
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <el-container>
+
+            <el-main>
+                <el-divider content-position="center">
+                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建配置 |</font>
+                    <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
+                        <el-button type="primary" :icon="config.isbuild?'el-icon-loading':'el-icon-sugar'"
+                            @click="buildconfig()" circle>
+                        </el-button>
+                    </el-tooltip>
+                </el-divider>
+                <br></br>
+                <el-steps :active="config.phase" finish-status="success" simple style="margin-top: 20px">
+                    <el-step title="更新XLS"></el-step>
+                    <el-step title="导出表"></el-step>
+                    <el-step title="提交到客户端"></el-step>
+                    <el-step title="提交到服务端"></el-step>
+                    <el-step title="结束"></el-step>
+                </el-steps>
+                <br></br>
+                <el-divider content-position="center">
+                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建客户端 |</font>
+                    <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
+                        <el-button type="primary" :icon="client.isbuild?'el-icon-loading':'el-icon-grape'"
+                            @click="buildclient()" circle></el-button>
+                    </el-tooltip>
+                </el-divider>
+                <br></br>
+                <el-steps :active="client.phase" finish-status="success" simple style="margin-top: 20px">
+                    <el-step title="更新Client"></el-step>
+                    <el-step title="编译"></el-step>
+                    <el-step title="结束"></el-step>
+                </el-steps>
+                <br></br>
+                <el-divider content-position="center">
+                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建服务端 |</font>
+                    <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
+                        <el-button type="primary" :icon="server.isbuild?'el-icon-loading':'el-icon-apple'"
+                            @click="buildserver()" circle></el-button>
+                    </el-tooltip>
+                </el-divider>
+                <br></br>
+                <el-steps :active="server.phase" finish-status="success" simple style="margin-top: 20px">
+                    <el-step title="更新Server"></el-step>
+                    <el-step title="编译"></el-step>
+                    <el-step title="结束"></el-step>
+                </el-steps>
+                <br></br>
+                <el-divider content-position="center">
+                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">全部构建 |</font>
+                    <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
+                        <el-button type="primary" :icon="all.isbuild?'el-icon-loading':'el-icon-cold-drink'"
+                            @click="buildall()" circle></el-button>
+                    </el-tooltip>
+                </el-divider>
+                <br></br>
+                <el-steps :active="all.phase" finish-status="success" simple style="margin-top: 20px">
+                    <el-step title="更新XLS"></el-step>
+                    <el-step title="更新Client"></el-step>
+                    <el-step title="更新Server"></el-step>
+                    <el-step title="导出表"></el-step>
+                    <el-step title="提交到Client"></el-step>
+                    <el-step title="提交到Server"></el-step>
+                    <el-step title="编译Client"></el-step>
+                    <el-step title="编译Server"></el-step>
+                    <el-step title="结束"></el-step>
+                </el-steps>
+            </el-main>
+
+            <el-footer>
+                <el-divider content-position="left">日志</el-divider>
+                <textarea rows="3" cols="20" style="width:100%;height:200px">{{logger}}</textarea>
+            </el-footer>
+        </el-container>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                logger: 'logger',
+                config: {
+                    maxtask: 5,
+                    isbuild: false,
+                    phase: 0
+                },
+                client: {
+                    maxtask: 3,
+                    isbuild: false,
+                    phase: 0
+                },
+                server: {
+                    maxtask: 3,
+                    isbuild: false,
+                    phase: 0
+                },
+                all: {
+                    maxtask: 9,
+                    isbuild: false,
+                    phase: 0
+                },
+                message: 'Hello Vue!'
+            },
+            mounted: function () {
+                setInterval(() => {
+                    this.request('https://192.168.0.30:14739?build=state', 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
+                    this.config.phase = (this.config.phase == this.config.maxtask) ? 0 : (this.config.phase + 1);
+                    this.all.phase = (this.all.phase == this.all.maxtask) ? 0 : (this.all.phase + 1);
+                }, 1000);
+            },
+            methods: {
+                request: function (url, time, callback) {
+                    var urlrequest = new XMLHttpRequest();
+                    var timeout = false;
+                    var timer = setTimeout(function () {
+                        timeout = true;
+                        urlrequest.abort();
+                    }, time);
+                    urlrequest.open("GET", url);
+                    urlrequest.onreadystatechange = function () {
+                        if (urlrequest.readyState !== 4) return;
+                        if (timeout) return;
+                        clearTimeout(timer);
+                        if (urlrequest.status === 200) {
+                            callback(urlrequest.responseText);
+                        }
+                    }
+                    urlrequest.send(null);
+                },
+                update: function (data) {
+                    this.config.isbuild = false;
+                    this.client.isbuild = false;
+                    this.server.isbuild = false;
+                    this.all.isbuild = false;
+                    this.config.phase = this.config.maxtask;
+                    this.client.phase = this.client.maxtask;
+                    this.server.phase = this.server.maxtask;
+                    this.all.phase = this.all.maxtask;
+                    switch (data.type) {
+                        case 'config':
+                            this.config.isbuild = data.isrun;
+                            this.config.phase = data.phase;
+                            break;
+                        case 'client':
+                            this.client.isbuild = data.isrun;
+                            this.client.phase = data.phase;
+                            break;
+                        case 'server':
+                            this.server.isbuild = data.isrun;
+                            this.server.phase = data.phase;
+                            break;
+                        case 'all':
+                            this.all.isbuild = data.isrun;
+                            this.all.phase = data.phase;
+                            break;
+                    }
+                    this.logger+=data.log;
+                },
+                buildconfig: function () {
+                    if(this.isbuild()){
+                        this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
+                        return;
+                    }
+                    this.$notify({ message: '开始构建配置', type: 'success' });
+                    this.request('https://192.168.0.30:14739?build=config', 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
+                },
+                buildclient: function () {
+                    if(this.isbuild()){
+                        this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
+                        return;
+                    }
+                    this.$notify({ message: '开始构建客户端', type: 'warning' });
+                    this.request('https://192.168.0.30:14739?build=client', 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
+                },
+                buildserver: function () {
+                    if(this.isbuild()){
+                        this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
+                        return;
+                    }
+                    this.$notify({ message: '开始构建服务器', type: 'warning' });
+                    this.request('https://192.168.0.30:14739?build=server', 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
+                },
+                buildall: function () {
+                    if(this.isbuild()){
+                        this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
+                        return;
+                    }
+                    this.$notify({ message: '开始全部构建', type: 'warning' });
+                    this.request('https://192.168.0.30:14739?build=all', 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
+                },
+                isbuild: function () {
+                    return this.config.isbuild || this.client.isbuild || this.server.isbuild || this.all.isbuild
+                }
+            }
+        })
+    </script>
+</body>

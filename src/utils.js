@@ -1,0 +1,53 @@
+var logger = require('./logger');
+
+module.exports =
+    class Util {
+        static runCmd(cmd, method) {
+            logger.log('--------------执行命令:' + cmd + "--------------");
+            var childProcess = require('child_process');
+            //var iconv = require('iconv-lite');
+            var handler = childProcess.exec(cmd, {
+                encoding: 'buffer',
+                timeout: 0, /*子进程最长执行时间 */
+                maxBuffer: 1024 * 1024
+            });
+            function stdotHandler(data) {
+                //console.log(iconv.decode(data,'gbk'));
+                logger.log(data.toString());
+            }
+            function stderrHandler(data) {
+                //console.log(iconv.decode(data,'gbk'));	
+                logger.log(data.toString());
+            }
+            function exitHandler(code) {
+                handler.stdout.removeListener('data', stdotHandler);
+                handler.stderr.removeListener('data', stderrHandler);
+                handler.removeListener('exit', exitHandler);
+                if (code != 0) {
+                    logger.log(cmd+'运行错误...');
+                }
+                method&&method();
+            }
+            handler.stdout.on('data', stdotHandler);
+            handler.stderr.on('data', stderrHandler);
+            handler.on('exit', exitHandler);
+        }
+
+        /** 
+        * 清空文件夹
+        * @param folderPath 文件夹路径
+        */
+        static clearFolder(folderPath) {
+            if (!fs.existsSync(folderPath)) return;
+            if (!fs.statSync(folderPath).isDirectory()) {
+                return;
+            }
+            var files = fs.readdirSync(folderPath);
+            for (var name of files) {
+                var curPath = folderPath + '/' + name;
+                if (fs.statSync(curPath).isFile()) {
+                    fs.unlinkSync(curPath);
+                }
+            }
+        }
+    }
