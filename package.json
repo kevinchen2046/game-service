@@ -29,7 +29,7 @@
     },
     "appport": {
         "client-service": 7888,
-        "console-service": 8888,
+        "console-service": 9888,
         "build-service": 14739
     }
 }
