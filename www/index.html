@@ -132,7 +132,7 @@
             },
             mounted: function () {
                 setInterval(() => {
-                    this.request('https://192.168.0.30:14739?build=state', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=state', 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });
@@ -194,7 +194,7 @@
                         return;
                     }
                     this.$notify({ message: '开始构建配置', type: 'success' });
-                    this.request('https://192.168.0.30:14739?build=config', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=config', 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });
@@ -205,7 +205,7 @@
                         return;
                     }
                     this.$notify({ message: '开始构建客户端', type: 'warning' });
-                    this.request('https://192.168.0.30:14739?build=client', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=client', 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });
@@ -216,7 +216,7 @@
                         return;
                     }
                     this.$notify({ message: '开始构建服务器', type: 'warning' });
-                    this.request('https://192.168.0.30:14739?build=server', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=server', 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });
@@ -227,7 +227,7 @@
                         return;
                     }
                     this.$notify({ message: '开始全部构建', type: 'warning' });
-                    this.request('https://192.168.0.30:14739?build=all', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=all', 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });

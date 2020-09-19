@@ -182,7 +182,7 @@ class Task {
 server.on("request", async (request, response) => {
     var url = request.url;
     logger.log("--------------收到请求:" + request.url + "--------------");
-    var urlobj = urlib.parse(req.url, true);
+    var urlobj = urlib.parse(url, true);
     switch (urlobj.query.build) {
         case 'client':
             Task.exec('client');
