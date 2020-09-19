@@ -209,6 +209,7 @@ server.on("request", async (request, response) => {
             }
         }
     }
+    response.setHeader("Access-Control-Allow-Origin","http://js.host");
     response.end(JSON.stringify({ type: Task._type, phase: Task._phase, isrun: Task._isrun, historyid: logger.history[logger.history.length - 1].id, log: result }));
 });
 
