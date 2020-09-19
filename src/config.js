@@ -1,12 +1,12 @@
-var fs=require('fs');
-var config={
-    "workpath":{
-        "client":"",
-        "server":"",
-        "excel":"",
-        "client-config":"",
-        "server-config":"",
-        "server-release-config":""
+var fs = require('fs');
+var config = {
+    "workpath": {
+        "client": "",
+        "server": "",
+        "excel": "",
+        "client-config": "",
+        "server-config": "",
+        "server-release-config": ""
     },
     "appport": {
         "client-service": 0,
@@ -14,5 +14,5 @@ var config={
         "build-service": 0
     }
 }
-config=JSON.parse(fs.readFileSync('package.json','utf-8'));
-module.exports=config;
+config = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`, 'utf-8'));
+module.exports = config;
