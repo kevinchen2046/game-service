@@ -151,35 +151,35 @@ class Task {
     }
 
     static async exec(cmdname) {
-        Task._type=cmdname;
+        Task._type = cmdname;
         switch (cmdname) {
             case 'all':
                 Task._isrun = true;
                 await Task.buildall();
                 Task._isrun = false;
-                Task._type='';
+                Task._type = '';
                 return;
             case 'client':
                 Task._isrun = true;
                 await Task.buildclient();
                 Task._isrun = false;
-                Task._type='';
+                Task._type = '';
                 return
             case 'server':
                 Task._isrun = true;
                 await Task.buildserver();
                 Task._isrun = false;
-                Task._type='';
+                Task._type = '';
                 return
             case 'config':
                 Task._isrun = true;
                 await Task.buildconfig();
                 Task._isrun = false;
-                Task._type='';
+                Task._type = '';
                 return
             case 'resource':
                 await Task.updateresource();
-                Task._type='';
+                Task._type = '';
                 break;
         }
     }
@@ -189,7 +189,15 @@ server.on("request", async (request, response) => {
     var url = request.url;
     logger.log("--------------收到请求:" + request.url + "--------------");
     var urlobj = urlib.parse(url, true);
-    Task.exec(urlobj.query.build)
+    switch (urlobj.query.build) {
+        case 'all':
+        case 'client':
+        case 'server':
+        case 'config':
+        case 'resource':
+            Task.exec(urlobj.query.build)
+            break;
+    }
     if (urlobj.query.historyid) {
         var result;
         for (var i = 0; i < logger.history.length; i++) {
@@ -199,7 +207,7 @@ server.on("request", async (request, response) => {
             }
         }
     }
-    response.setHeader("Access-Control-Allow-Origin","*");
+    response.setHeader("Access-Control-Allow-Origin", "*");
     response.end(JSON.stringify({ type: Task._type, phase: Task._phase, isrun: Task._isrun, historyid: logger.history[logger.history.length - 1].id, log: result }));
 });
 
