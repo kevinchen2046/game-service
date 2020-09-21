@@ -1,3 +1,4 @@
+const { urlencoded } = require('express');
 var fs = require('fs');
 var loggerMap = {};
 
@@ -68,6 +69,11 @@ module.exports = class Logger {
             if (Logger.history[i].id == starthistoryid) {
                 result = Logger.history.slice(i, Logger.history.length);
                 break;
+            }
+        }
+        if(result){
+            for(var log of result){
+                log.content=encodeURIComponent(log.content);
             }
         }
         return result;

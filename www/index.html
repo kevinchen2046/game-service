@@ -177,7 +177,7 @@
                     if (data.log) {
                         this.historyid = data.log[data.log.length - 1].id;
                         for(var logitem of data.log){
-                            this.logger += '\n'+logitem.content;
+                            this.logger += '\n'+decodeURIComponent(logitem.content);
                         }
                     }
                 },

@@ -211,8 +211,8 @@ server.listen(config.appport["build-service"], function () {
     console.log("服务已开启...客户端Web服务监听端口为:" + config.appport["build-service"]);
 });
 
-utils.runCmd(`http-server ${config.workpath.client} --cors -c0 -p ${config.appport["client-service"]}`);
-utils.runCmd(`http-server ${__dirname}/www --cors -c0 -p ${config.appport["console-service"]}`);
+utils.runCmd(`http-server ${config.workpath.client} --cors -c0 -p ${config.appport["client-service"]}`,null,false);
+utils.runCmd(`http-server ${__dirname}/www --cors -c0 -p ${config.appport["console-service"]}`,null,false);
 setTimeout(() => {
     process.title = '西行记Web服务[允许跨域][不允许缓存][Client端口' + config.appport["client-service"] + '][服务端口' + config.appport["build-service"] + '][控制台端口' + config.appport["console-service"] + ']';
 }, 200);

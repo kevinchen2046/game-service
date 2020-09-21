@@ -3,8 +3,9 @@ var logger = require('./logger');
 
 module.exports =
     class Util {
-        static runCmd(cmd, method) {
-            logger.log('--------------执行命令:' + cmd + "--------------");
+        static runCmd(cmd, method, logrecorde) {
+            if (logrecorde == undefined) logrecorde = true;
+            logrecorde ? logger.log('--------------执行命令:' + cmd + "--------------") : console.log('--------------执行命令:' + cmd + "--------------");
             var childProcess = require('child_process');
             //var iconv = require('iconv-lite');
             var handler = childProcess.exec(cmd, {
@@ -14,20 +15,20 @@ module.exports =
             });
             function stdotHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));
-                logger.log(data.toString());
+                logrecorde ? logger.log(data.toString()) : console.log(data.toString());
             }
             function stderrHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));	
-                logger.log(data.toString());
+                logrecorde ? logger.log(data.toString()) : console.log(data.toString());
             }
             function exitHandler(code) {
                 handler.stdout.removeListener('data', stdotHandler);
                 handler.stderr.removeListener('data', stderrHandler);
                 handler.removeListener('exit', exitHandler);
                 if (code != 0) {
-                    logger.log(cmd+'运行错误...');
+                    logrecorde ? logger.log(cmd + '运行错误...') : console.log(cmd + '运行错误...');
                 }
-                method&&method();
+                method && method();
             }
             handler.stdout.on('data', stdotHandler);
             handler.stderr.on('data', stderrHandler);
