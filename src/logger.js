@@ -69,6 +69,7 @@ module.exports = class Logger {
         var result;
         for (var i = 0; i < Logger.history.length; i++) {
             if (Logger.history[i].id == starthistoryid) {
+                if(i==Logger.history.length-1) break;
                 result = Logger.history.slice(i, Logger.history.length);
                 break;
             }
