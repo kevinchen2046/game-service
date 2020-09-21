@@ -59,7 +59,7 @@ class Task {
         Task._taskstate.server.phase = 1;
         await Task.updateserver();
         Task._taskstate.server.phase = 2;
-        await Task.commitserver();
+        await Task.compileserver();
         Task._taskstate.server.phase = 3;
         Task._taskstate.server.isrun=false;
     }
