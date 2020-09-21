@@ -161,19 +161,19 @@ class Task {
                 return;
             case 'client':
                 Task._isrun = true;
-                await Task.buildall();
+                await Task.buildclient();
                 Task._isrun = false;
                 Task._type='';
                 return
             case 'server':
                 Task._isrun = true;
-                await Task.buildall();
+                await Task.buildserver();
                 Task._isrun = false;
                 Task._type='';
                 return
             case 'config':
                 Task._isrun = true;
-                await Task.buildall();
+                await Task.buildconfig();
                 Task._isrun = false;
                 Task._type='';
                 return

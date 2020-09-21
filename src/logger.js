@@ -28,7 +28,7 @@ class LoggerFile {
 
     later() {
         if (this.timeId) return;
-        this.timeId = setTimeout(this.writeHandler, this.writeinterval);
+        this.timeId = setTimeout(this.writeHandler.bind(this), this.writeinterval);
     }
 
     clean() {
