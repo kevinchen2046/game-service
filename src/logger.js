@@ -47,12 +47,14 @@ class LoggerFile {
 module.exports = class Logger {
     static id = 0;
     static history = [];
-    static log(content, tag, outfile) {
+    static log(content, tag, outfile,recorde) {
+        if(recorde==undefined) recorde=true;
         var content = (!tag ? '[LOG]' : `[${tag}]`) + ' ' + content;
         console.log(content);
         if (outfile) {
             LoggerFile.get(outfile, 2000).add(content);
         }
+        if(!recorde) return;
         if (Logger.history.length >= 100) {
             Logger.history.shift();
         }

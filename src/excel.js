@@ -70,7 +70,7 @@ module.exports = function (filepath) {
                 }
             }
             if(!notEmpty&&(rowclient.length||rowserver.length)){
-               logger.log('忽略行:' + [sheet.name,notEmpty,rowclient.length,rowserver.length,'row:',rowclient,rowserver].join(','),'WARN','config.log');
+               logger.log('忽略行:' + [sheet.name,notEmpty,rowclient.length,rowserver.length,'row:',rowclient,rowserver].join(','),'WARN','config.log',false);
             }
             notEmpty&&rowclient.length && clients.push(rowclient);
             notEmpty&&rowserver.length && servers.push(rowserver);
