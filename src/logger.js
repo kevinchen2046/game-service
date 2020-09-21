@@ -79,9 +79,9 @@ module.exports = class Logger {
         return result;
     }
     static getFirstHistory(){
-        return Logger.history[0];
+        return Logger.history.length?Logger.history[0]:null;
     }
     static getLastHistory(){
-        return Logger.history[Logger.history.length - 1];
+        return Logger.history.length?Logger.history[Logger.history.length - 1]:null;
     }
 }

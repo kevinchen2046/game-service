@@ -202,7 +202,7 @@ server.on("request", async (request, response) => {
     response.setHeader("Access-Control-Allow-Origin", "*");
     response.end(JSON.stringify({
         task: Task._taskstate,
-        historyid: logger.getLastHistory().id,
+        historyid: logger.getLastHistory()?logger.getLastHistory().id:1,
         log: urlobj.query.historyid ? logger.getHistory(urlobj.query.historyid) : logger.getHistory(logger.getFirstHistory().id)
     }));
 });
