@@ -40,7 +40,7 @@
                     </el-tooltip>
                 </el-divider>
                 <br></br>
-                <el-steps :active="task.config.phase" finish-status="success" simple style="margin-top: 20px">
+                <el-steps :active="task.config.phase" simple style="margin-top: 20px">
                     <el-step title="更新XLS"></el-step>
                     <el-step title="导出表"></el-step>
                     <el-step title="提交到客户端"></el-step>
@@ -56,7 +56,7 @@
                     </el-tooltip>
                 </el-divider>
                 <br></br>
-                <el-steps :active="task.client.phase" finish-status="success" simple style="margin-top: 20px">
+                <el-steps :active="task.client.phase" simple style="margin-top: 20px">
                     <el-step title="更新Client"></el-step>
                     <el-step title="编译"></el-step>
                     <el-step title="结束"></el-step>
@@ -70,7 +70,7 @@
                     </el-tooltip>
                 </el-divider>
                 <br></br>
-                <el-steps :active="task.server.phase" finish-status="success" simple style="margin-top: 20px">
+                <el-steps :active="task.server.phase" simple style="margin-top: 20px">
                     <el-step title="更新Server"></el-step>
                     <el-step title="编译"></el-step>
                     <el-step title="结束"></el-step>
@@ -84,7 +84,7 @@
                     </el-tooltip>
                 </el-divider>
                 <br></br>
-                <el-steps :active="task.all.phase" finish-status="success" simple style="margin-top: 20px">
+                <el-steps :active="task.all.phase" simple style="margin-top: 20px">
                     <el-step title="更新XLS"></el-step>
                     <el-step title="更新Client"></el-step>
                     <el-step title="更新Server"></el-step>
