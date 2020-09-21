@@ -64,13 +64,13 @@ class Task {
 
     static async compileserver() {
         return new Promise((reslove) => {
-            utils.runCmd(`tsc --build ${config.workpath.server}/tsconfig_build.json`, (log1) => reslove(log + log1));
+            utils.runCmd(`tsc --build ${config.workpath.server}/tsconfig_build.json`, (log) => reslove(log));
         });
     }
 
     static async compileclient() {
         return new Promise((reslove) => {
-            utils.runCmd(`egret build ${config.workpath.client}`, (log1) => reslove(log + log1));
+            utils.runCmd(`egret build ${config.workpath.client}`, (log) => reslove(log));
         });
     }
 
