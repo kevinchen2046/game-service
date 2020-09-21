@@ -16,7 +16,7 @@ class LoggerFile {
 
     static get(filename, writeinterval) {
         if (!loggerMap[filename]) {
-            loggerMap[filename] = new Logger(filename, writeinterval);
+            loggerMap[filename] = new LoggerFile(filename, writeinterval);
         }
         return loggerMap[filename];
     }
