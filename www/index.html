@@ -160,14 +160,15 @@
                     urlrequest.send(null);
                 },
                 update: function (data) {
+                    console.log(data);
                     this.config.isbuild = false;
                     this.client.isbuild = false;
                     this.server.isbuild = false;
                     this.all.isbuild = false;
-                    this.config.phase = this.config.maxtask;
-                    this.client.phase = this.client.maxtask;
-                    this.server.phase = this.server.maxtask;
-                    this.all.phase = this.all.maxtask;
+                    this.config.phase = -1;
+                    this.client.phase = -1;
+                    this.server.phase = -1;
+                    this.all.phase = -1;
                     switch (data.type) {
                         case 'config':
                             this.config.isbuild = data.isrun;
@@ -186,7 +187,7 @@
                             this.all.phase = data.phase;
                             break;
                     }
-                    this.logger+=data.log;
+                    if(data.log) this.logger+=data.log;
                 },
                 buildconfig: function () {
                     if(this.isbuild()){

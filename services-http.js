@@ -151,29 +151,35 @@ class Task {
     }
 
     static async exec(cmd) {
+        Task._type=cmd.cmd;
         switch (cmd.cmd) {
             case 'all':
                 Task._isrun = true;
                 await Task.buildall();
                 Task._isrun = false;
+                Task._type='';
                 return;
             case 'client':
                 Task._isrun = true;
                 await Task.buildall();
                 Task._isrun = false;
+                Task._type='';
                 return
             case 'server':
                 Task._isrun = true;
                 await Task.buildall();
                 Task._isrun = false;
+                Task._type='';
                 return
             case 'config':
                 Task._isrun = true;
                 await Task.buildall();
                 Task._isrun = false;
+                Task._type='';
                 return
             case 'resource':
                 await Task.updateresource();
+                Task._type='';
                 break;
         }
     }
