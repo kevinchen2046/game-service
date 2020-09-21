@@ -108,6 +108,7 @@
             el: '#app',
             data: {
                 logger: 'logger',
+                historyid:1,
                 curtask: null,
                 task: {
                     config: {
@@ -135,7 +136,7 @@
             },
             mounted: function () {
                 setInterval(() => {
-                    this.request('http://192.168.0.30:14739?build=state', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=state&historyid='+this.historyid, 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });
@@ -188,7 +189,10 @@
                             this.task.all.phase = data.phase;
                             break;
                     }
-                    if (data.log) this.logger += data.log;
+                    if (data.log){
+                        this.historyid=data.log[data.log.length-1].id;
+                        this.logger += data.log.join('\n');
+                    }
                 },
                 buildconfig: function () {
                     if (this.isbuild()) {
@@ -196,7 +200,7 @@
                         return;
                     }
                     this.$notify({ message: '开始构建配置', type: 'success' });
-                    this.request('http://192.168.0.30:14739?build=config', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=config&historyid='+this.historyid, 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });
@@ -207,7 +211,7 @@
                         return;
                     }
                     this.$notify({ message: '开始构建客户端', type: 'warning' });
-                    this.request('http://192.168.0.30:14739?build=client', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=client&historyid='+this.historyid, 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });
@@ -218,7 +222,7 @@
                         return;
                     }
                     this.$notify({ message: '开始构建服务器', type: 'warning' });
-                    this.request('http://192.168.0.30:14739?build=server', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=server&historyid='+this.historyid, 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });
@@ -229,7 +233,7 @@
                         return;
                     }
                     this.$notify({ message: '开始全部构建', type: 'warning' });
-                    this.request('http://192.168.0.30:14739?build=all', 1000, (data) => {
+                    this.request('http://192.168.0.30:14739?build=all&historyid='+this.historyid, 1000, (data) => {
                         data = JSON.parse(data);
                         this.update(data);
                     });

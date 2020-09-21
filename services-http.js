@@ -11,55 +11,67 @@ var server = http.createServer();
 logger.recorde = true;
 
 class Task {
-    static _type = '';
-    static _phase = 0;
-    static _isrun = false;
+    static _curtask = '';
+    static _taskstate={
+        client:{phase:0,isrun:false},
+        server:{phase:0,isrun:false},
+        config:{phase:0,isrun:false},
+        all:{phase:0,isrun:false}
+    };
     static async buildall() {
-        Task._phase = 1;
+        Task._taskstate.all.isrun=true;
+        Task._taskstate.all.phase = 1;
         await Task.updatexls();
-        Task._phase = 2;
+        Task._taskstate.all.phase = 2;
         await Task.updateclient();
-        Task._phase = 3;
+        Task._taskstate.all.phase = 3;
         await Task.updateserver()
-        Task._phase = 4;
+        Task._taskstate.all.phase = 4;
         await Task.exportconfig();
-        Task._phase = 5;
+        Task._taskstate.all.phase = 5;
         await Task.commitclient();
-        Task._phase = 6;
+        Task._taskstate.all.phase = 6;
         await Task.commitserver();
-        Task._phase = 7;
+        Task._taskstate.all.phase = 7;
         await Task.compileclient();
-        Task._phase = 8;
+        Task._taskstate.all.phase = 8;
         await Task.commitserver();
-        Task._phase = 9;
+        Task._taskstate.all.phase = 9;
+        Task._taskstate.all.isrun=false;
     }
 
     static async buildconfig() {
-        Task._phase = 1;
+        Task._taskstate.config.isrun=true;
+        Task._taskstate.config.phase = 1;
         await Task.updatexls();
-        Task._phase = 2;
+        Task._taskstate.config.phase = 2;
         await Task.exportconfig();
-        Task._phase = 3;
+        Task._taskstate.config.phase = 3;
         await Task.commitclient();
-        Task._phase = 4;
+        Task._taskstate.config.phase = 4;
         await Task.commitserver();
-        Task._phase = 5;
+        Task._taskstate.config.phase = 5;
+        Task._taskstate.config.isrun=false;
     }
 
     static async buildserver() {
-        Task._phase = 1;
+        Task._taskstate.server.isrun=true;
+        Task._taskstate.server.phase = 1;
         await Task.updateserver();
-        Task._phase = 2;
+        Task._taskstate.server.phase = 2;
         await Task.commitserver();
-        Task._phase = 3;
+        Task._taskstate.server.phase = 3;
+        Task._taskstate.server.isrun=false;
     }
 
     static async buildclient() {
-        Task._phase = 1;
+        Task._taskstate.client.isrun=true;
+        Task._taskstate.client.phase = 1;
         await Task.updateclient();
-        Task._phase = 2;
+        Task._taskstate.client.phase = 2;
         await Task.compileclient();
-        Task._phase = 3;
+        Task._taskstate.client.phase = 3;
+        Task._taskstate.client.isrun=false;
     }
 
     static async compileserver() {
@@ -151,37 +163,26 @@ class Task {
     }
 
     static async exec(cmdname) {
-        Task._type = cmdname;
+        if (Task._curtask) return;
+        Task._curtask = cmdname;
         switch (cmdname) {
             case 'all':
-                Task._isrun = true;
                 await Task.buildall();
-                Task._isrun = false;
-                Task._type = '';
-                return;
+                break;
             case 'client':
-                Task._isrun = true;
                 await Task.buildclient();
-                Task._isrun = false;
-                Task._type = '';
-                return
+                break
             case 'server':
-                Task._isrun = true;
                 await Task.buildserver();
-                Task._isrun = false;
-                Task._type = '';
-                return
+                break
             case 'config':
-                Task._isrun = true;
                 await Task.buildconfig();
-                Task._isrun = false;
-                Task._type = '';
-                return
+                break
             case 'resource':
                 await Task.updateresource();
-                Task._type = '';
                 break;
         }
+        Task._curtask = '';
     }
 }
 
@@ -198,17 +199,12 @@ server.on("request", async (request, response) => {
             Task.exec(urlobj.query.build)
             break;
     }
-    if (urlobj.query.historyid) {
-        var result;
-        for (var i = 0; i < logger.history.length; i++) {
-            if (logger.history[i].id == urlobj.query.historyid) {
-                result = logger.history.slice(i, logger.history.length);
-                break;
-            }
-        }
-    }
     response.setHeader("Access-Control-Allow-Origin", "*");
-    response.end(JSON.stringify({ type: Task._type, phase: Task._phase, isrun: Task._isrun, historyid: logger.history[logger.history.length - 1].id, log: result }));
+    response.end(JSON.stringify({
+        task: Task._taskstate,
+        historyid: logger.getLastHistory().id,
+        log: urlobj.query.historyid ? logger.getHistory(urlobj.query.historyid) : logger.getHistory(logger.getFirstHistory().id)
+    }));
 });
 
 server.listen(config.appport["build-service"], function () {

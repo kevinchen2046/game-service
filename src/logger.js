@@ -60,4 +60,22 @@ module.exports = class Logger {
     static cleanfile(outfile) {
         LoggerFile.get(outfile).clean();
     }
+
+    /**获取记录 */
+    static getHistory(starthistoryid) {
+        var result;
+        for (var i = 0; i < Logger.history.length; i++) {
+            if (Logger.history[i].id == starthistoryid) {
+                result = Logger.history.slice(i, Logger.history.length);
+                break;
+            }
+        }
+        return result;
+    }
+    static getFirstHistory(){
+        return Logger.history[0];
+    }
+    static getLastHistory(){
+        return Logger.history[Logger.history.length - 1];
+    }
 }
