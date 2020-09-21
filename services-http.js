@@ -200,10 +200,13 @@ server.on("request", async (request, response) => {
             break;
     }
     response.setHeader("Access-Control-Allow-Origin", "*");
+    var lastlog=logger.getLastHistory();
+    var lastlogId=lastlog?lastlog.id:1;
+    var startlogId=urlobj.query.historyid?urlobj.query.historyid:(logger.getFirstHistory()?logger.getFirstHistory().id:1);
     response.end(JSON.stringify({
         task: Task._taskstate,
-        historyid: logger.getLastHistory()?logger.getLastHistory().id:1,
-        log: urlobj.query.historyid ? logger.getHistory(urlobj.query.historyid) : logger.getHistory(logger.getFirstHistory().id)
+        historyid: lastlog?lastlog.id:1,
+        log: (startlogId==lastlogId?undefined:logger.getHistory(urlobj.query.historyid))
     }));
 });
 

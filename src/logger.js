@@ -66,7 +66,7 @@ module.exports = class Logger {
 
     /**获取记录 */
     static getHistory(starthistoryid) {
-        var result;
+        var result=[];
         for (var i = 0; i < Logger.history.length; i++) {
             if (Logger.history[i].id == starthistoryid) {
                 if(i==Logger.history.length-1) break;
