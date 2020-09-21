@@ -76,7 +76,7 @@ module.exports = class Logger {
         }
         if(result){
             for(var log of result){
-                log.content=encodeURIComponent(log.content);
+                log.content=encodeURI(log.content);
             }
         }
         return result;
