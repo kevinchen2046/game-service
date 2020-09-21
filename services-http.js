@@ -150,9 +150,9 @@ class Task {
         })
     }
 
-    static async exec(cmd) {
-        Task._type=cmd.cmd;
-        switch (cmd.cmd) {
+    static async exec(cmdname) {
+        Task._type=cmdname;
+        switch (cmdname) {
             case 'all':
                 Task._isrun = true;
                 await Task.buildall();
@@ -189,23 +189,7 @@ server.on("request", async (request, response) => {
     var url = request.url;
     logger.log("--------------收到请求:" + request.url + "--------------");
     var urlobj = urlib.parse(url, true);
-    switch (urlobj.query.build) {
-        case 'client':
-            Task.exec('client');
-            break;
-        case 'server':
-            Task.exec('server')
-            break;
-        case 'config':
-            Task.exec('config')
-            break;
-        case 'all':
-            Task.exec('all')
-            break;
-        case 'resource':
-            Task.dotask('resource')
-            break;
-    }
+    Task.exec(urlobj.query.build)
     if (urlobj.query.historyid) {
         var result;
         for (var i = 0; i < logger.history.length; i++) {

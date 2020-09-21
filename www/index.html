@@ -34,13 +34,13 @@
                 <el-divider content-position="center">
                     <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建配置 |</font>
                     <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="config.isbuild?'el-icon-loading':'el-icon-sugar'"
+                        <el-button type="primary" :icon="task.config.isbuild?'el-icon-loading':'el-icon-sugar'"
                             @click="buildconfig()" circle>
                         </el-button>
                     </el-tooltip>
                 </el-divider>
                 <br></br>
-                <el-steps :active="config.phase" finish-status="success" simple style="margin-top: 20px">
+                <el-steps :active="task.config.phase" finish-status="success" simple style="margin-top: 20px">
                     <el-step title="更新XLS"></el-step>
                     <el-step title="导出表"></el-step>
                     <el-step title="提交到客户端"></el-step>
@@ -51,12 +51,12 @@
                 <el-divider content-position="center">
                     <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建客户端 |</font>
                     <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="client.isbuild?'el-icon-loading':'el-icon-grape'"
+                        <el-button type="primary" :icon="task.client.isbuild?'el-icon-loading':'el-icon-grape'"
                             @click="buildclient()" circle></el-button>
                     </el-tooltip>
                 </el-divider>
                 <br></br>
-                <el-steps :active="client.phase" finish-status="success" simple style="margin-top: 20px">
+                <el-steps :active="task.client.phase" finish-status="success" simple style="margin-top: 20px">
                     <el-step title="更新Client"></el-step>
                     <el-step title="编译"></el-step>
                     <el-step title="结束"></el-step>
@@ -65,12 +65,12 @@
                 <el-divider content-position="center">
                     <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建服务端 |</font>
                     <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="server.isbuild?'el-icon-loading':'el-icon-apple'"
+                        <el-button type="primary" :icon="task.server.isbuild?'el-icon-loading':'el-icon-apple'"
                             @click="buildserver()" circle></el-button>
                     </el-tooltip>
                 </el-divider>
                 <br></br>
-                <el-steps :active="server.phase" finish-status="success" simple style="margin-top: 20px">
+                <el-steps :active="task.server.phase" finish-status="success" simple style="margin-top: 20px">
                     <el-step title="更新Server"></el-step>
                     <el-step title="编译"></el-step>
                     <el-step title="结束"></el-step>
@@ -79,12 +79,12 @@
                 <el-divider content-position="center">
                     <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">全部构建 |</font>
                     <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="all.isbuild?'el-icon-loading':'el-icon-cold-drink'"
+                        <el-button type="primary" :icon="task.all.isbuild?'el-icon-loading':'el-icon-cold-drink'"
                             @click="buildall()" circle></el-button>
                     </el-tooltip>
                 </el-divider>
                 <br></br>
-                <el-steps :active="all.phase" finish-status="success" simple style="margin-top: 20px">
+                <el-steps :active="task.all.phase" finish-status="success" simple style="margin-top: 20px">
                     <el-step title="更新XLS"></el-step>
                     <el-step title="更新Client"></el-step>
                     <el-step title="更新Server"></el-step>
@@ -108,25 +108,28 @@
             el: '#app',
             data: {
                 logger: 'logger',
-                config: {
-                    maxtask: 5,
-                    isbuild: false,
-                    phase: 0
-                },
-                client: {
-                    maxtask: 3,
-                    isbuild: false,
-                    phase: 0
-                },
-                server: {
-                    maxtask: 3,
-                    isbuild: false,
-                    phase: 0
-                },
-                all: {
-                    maxtask: 9,
-                    isbuild: false,
-                    phase: 0
+                curtask: null,
+                task: {
+                    config: {
+                        maxtask: 5,
+                        isbuild: false,
+                        phase: 0
+                    },
+                    client: {
+                        maxtask: 3,
+                        isbuild: false,
+                        phase: 0
+                    },
+                    server: {
+                        maxtask: 3,
+                        isbuild: false,
+                        phase: 0
+                    },
+                    all: {
+                        maxtask: 9,
+                        isbuild: false,
+                        phase: 0
+                    },
                 },
                 message: 'Hello Vue!'
             },
@@ -136,8 +139,6 @@
                         data = JSON.parse(data);
                         this.update(data);
                     });
-                    this.config.phase = (this.config.phase == this.config.maxtask) ? 0 : (this.config.phase + 1);
-                    this.all.phase = (this.all.phase == this.all.maxtask) ? 0 : (this.all.phase + 1);
                 }, 1000);
             },
             methods: {
@@ -161,36 +162,36 @@
                 },
                 update: function (data) {
                     console.log(data);
-                    this.config.isbuild = false;
-                    this.client.isbuild = false;
-                    this.server.isbuild = false;
-                    this.all.isbuild = false;
-                    this.config.phase = -1;
-                    this.client.phase = -1;
-                    this.server.phase = -1;
-                    this.all.phase = -1;
+                    this.task.config.isbuild = false;
+                    this.task.client.isbuild = false;
+                    this.task.server.isbuild = false;
+                    this.task.all.isbuild = false;
+                    this.task.config.phase = -1;
+                    this.task.client.phase = -1;
+                    this.task.server.phase = -1;
+                    this.task.all.phase = -1;
                     switch (data.type) {
                         case 'config':
-                            this.config.isbuild = data.isrun;
-                            this.config.phase = data.phase;
+                            this.task.config.isbuild = data.isrun;
+                            this.task.config.phase = data.phase;
                             break;
                         case 'client':
-                            this.client.isbuild = data.isrun;
-                            this.client.phase = data.phase;
+                            this.task.client.isbuild = data.isrun;
+                            this.task.client.phase = data.phase;
                             break;
                         case 'server':
-                            this.server.isbuild = data.isrun;
-                            this.server.phase = data.phase;
+                            this.task.server.isbuild = data.isrun;
+                            this.task.server.phase = data.phase;
                             break;
                         case 'all':
-                            this.all.isbuild = data.isrun;
-                            this.all.phase = data.phase;
+                            this.task.all.isbuild = data.isrun;
+                            this.task.all.phase = data.phase;
                             break;
                     }
-                    if(data.log) this.logger+=data.log;
+                    if (data.log) this.logger += data.log;
                 },
                 buildconfig: function () {
-                    if(this.isbuild()){
+                    if (this.isbuild()) {
                         this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
                         return;
                     }
@@ -201,7 +202,7 @@
                     });
                 },
                 buildclient: function () {
-                    if(this.isbuild()){
+                    if (this.isbuild()) {
                         this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
                         return;
                     }
@@ -212,7 +213,7 @@
                     });
                 },
                 buildserver: function () {
-                    if(this.isbuild()){
+                    if (this.isbuild()) {
                         this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
                         return;
                     }
@@ -223,7 +224,7 @@
                     });
                 },
                 buildall: function () {
-                    if(this.isbuild()){
+                    if (this.isbuild()) {
                         this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
                         return;
                     }
@@ -234,7 +235,7 @@
                     });
                 },
                 isbuild: function () {
-                    return this.config.isbuild || this.client.isbuild || this.server.isbuild || this.all.isbuild
+                    return this.task.config.isbuild || this.task.client.isbuild || this.task.server.isbuild || this.task.all.isbuild
                 }
             }
         })
