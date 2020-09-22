@@ -28,7 +28,7 @@ logger.addhandler = function (content, id) {
         ws.send(JSON.stringify({
             type: 'log',
             id: id,
-            log: content
+            content: content
         }));
     }
 }
