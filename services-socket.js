@@ -17,11 +17,13 @@ function syscState(ws) {
 }
 
 task.statechange=function(){
+    console.log('task statechange:',clients.length);
     for(var ws of clients){
         syscState(ws);
     }
 }
 logger.addhandler=function(content,id){
+    console.log('log add:',content);
     for(var ws of clients){
         ws.send(JSON.stringify({
             type: 'log',
