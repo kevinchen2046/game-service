@@ -17,7 +17,8 @@
         "morgan": "^1.9.1",
         "node-xlsx": "^0.15.0",
         "reflect-metadata": "^0.1.13",
-        "serve-favicon": "^2.5.0"
+        "serve-favicon": "^2.5.0",
+        "ws": "^7.3.1"
     },
     "workpath": {
         "client": "E:/project/xxj_dev/client",

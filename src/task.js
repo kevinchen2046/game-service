@@ -1,9 +1,9 @@
 var fs = require('fs');
 var path = require('path');
-var excel = require('./src/excel');
-var config = require('./src/config');
-var utils = require('./src/utils')
-var logger = require('./src/logger')
+var excel = require('./excel');
+var config = require('./config');
+var utils = require('./utils')
+var logger = require('./logger')
 module.exports=class Task {
     static statechange=null;
     static _curtask = '';
