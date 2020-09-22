@@ -34,7 +34,7 @@
                 <el-divider content-position="center">
                     <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建配置 |</font>
                     <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="task.config.isbuild?'el-icon-loading':'el-icon-sugar'" :disabled="disabled"
+                        <el-button type="primary" :icon="task.config.isbuild?'el-icon-loading':'el-icon-sugar'"
                             @click="buildconfig()" circle>
                         </el-button>
                     </el-tooltip>
@@ -51,7 +51,7 @@
                 <el-divider content-position="center">
                     <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建客户端 |</font>
                     <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="task.client.isbuild?'el-icon-loading':'el-icon-grape'" :disabled="disabled"
+                        <el-button type="primary" :icon="task.client.isbuild?'el-icon-loading':'el-icon-grape'"
                             @click="buildclient()" circle></el-button>
                     </el-tooltip>
                 </el-divider>
@@ -65,7 +65,7 @@
                 <el-divider content-position="center">
                     <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建服务端 |</font>
                     <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="task.server.isbuild?'el-icon-loading':'el-icon-apple'" :disabled="disabled"
+                        <el-button type="primary" :icon="task.server.isbuild?'el-icon-loading':'el-icon-apple'"
                             @click="buildserver()" circle></el-button>
                     </el-tooltip>
                 </el-divider>
@@ -79,7 +79,7 @@
                 <el-divider content-position="center">
                     <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">全部构建 |</font>
                     <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="task.all.isbuild?'el-icon-loading':'el-icon-cold-drink'" :disabled="disabled"
+                        <el-button type="primary" :icon="task.all.isbuild?'el-icon-loading':'el-icon-cold-drink'"
                             @click="buildall()" circle></el-button>
                     </el-tooltip>
                 </el-divider>
@@ -99,7 +99,7 @@
 
             <el-footer>
                 <el-divider content-position="left">日志</el-divider>
-                <textarea rows="3" cols="20" style="width:100%;height:290px;resize: none;outline:none;border:solid 1px #ccc; " readonly="readonly">{{logger}}</textarea>
+                <textarea rows="3" cols="20" style="width:100%;height:200px">{{logger}}</textarea>
             </el-footer>
         </el-container>
     </div>
@@ -108,7 +108,6 @@
             el: '#app',
             data: {
                 logger: 'logger',
-                disabled:true,
                 historyid: 1,
                 curtask: null,
                 task: {
@@ -133,18 +132,15 @@
                         phase: 0
                     },
                 },
-                ws: null
+                message: 'Hello Vue!'
             },
             mounted: function () {
-                this.ws = new WebSocket("ws://192.168.0.30:14739");
-                this.ws.onopen = (e) => {
-                    console.log('Connection to server opened');
-                    ws.send(JSON.stringify({ build: 'state'  ,historyid:this.historyid}));
-                }
-                this.ws.onmessage = (msg) => {
-                    var data = JSON.parse(msg);
-                    this.update(data);
-                }
+                setInterval(() => {
+                    this.request('http://192.168.0.30:14739?build=state&historyid=' + this.historyid, 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
+                }, 1000);
             },
             methods: {
                 request: function (url, time, callback) {
@@ -167,7 +163,6 @@
                 },
                 update: function (data) {
                     console.log(data);
-                    this.disabled=false;
                     this.task.config.isbuild = data.task.config.isrun;
                     this.task.config.phase = data.task.config.phase;
 
@@ -181,8 +176,8 @@
                     this.task.all.phase = data.task.all.phase;
                     if (data.log) {
                         this.historyid = data.log[data.log.length - 1].id;
-                        for (var logitem of data.log) {
-                            this.logger += '\n' + decodeURI(logitem.content);
+                        for(var logitem of data.log){
+                            this.logger += '\n'+decodeURI(logitem.content);
                         }
                     }
                 },
@@ -192,7 +187,10 @@
                         return;
                     }
                     this.$notify({ message: '开始构建配置', type: 'success' });
-                    this.ws.send(JSON.stringify({ build: 'config' ,historyid:this.historyid}));
+                    this.request('http://192.168.0.30:14739?build=config&historyid=' + this.historyid, 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
                 },
                 buildclient: function () {
                     if (this.isbuild()) {
@@ -200,7 +198,10 @@
                         return;
                     }
                     this.$notify({ message: '开始构建客户端', type: 'warning' });
-                    this.ws.send(JSON.stringify({ build: 'client' ,historyid:this.historyid}));
+                    this.request('http://192.168.0.30:14739?build=client&historyid=' + this.historyid, 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
                 },
                 buildserver: function () {
                     if (this.isbuild()) {
@@ -208,7 +209,10 @@
                         return;
                     }
                     this.$notify({ message: '开始构建服务器', type: 'warning' });
-                    this.ws.send(JSON.stringify({ build: 'server' ,historyid:this.historyid}));
+                    this.request('http://192.168.0.30:14739?build=server&historyid=' + this.historyid, 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
                 },
                 buildall: function () {
                     if (this.isbuild()) {
@@ -216,7 +220,10 @@
                         return;
                     }
                     this.$notify({ message: '开始全部构建', type: 'warning' });
-                    this.ws.send(JSON.stringify({ build: 'all' ,historyid:this.historyid}));
+                    this.request('http://192.168.0.30:14739?build=all&historyid=' + this.historyid, 1000, (data) => {
+                        data = JSON.parse(data);
+                        this.update(data);
+                    });
                 },
                 isbuild: function () {
                     return this.task.config.isbuild || this.task.client.isbuild || this.task.server.isbuild || this.task.all.isbuild
