@@ -1,8 +1,7 @@
 <head>
     <meta charset="utf-8">
     <title>西行记自动构建</title>
-    <meta name="viewport"
-        content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="full-screen" content="true" />
     <meta name="screen-orientation" content="portrait" />
@@ -11,7 +10,6 @@
     <style>
         html,
         body {
-            -ms-touch-action: none;
             padding: 0;
             border: 0;
             margin: 0;
@@ -34,9 +32,7 @@
                 <el-main>
                     <img src='./logo.png' style="margin-left: 20px;margin-top: 20px;"></img>
                     <img src='./gamelogo.png' style="margin-left: 20px;margin-top: 20px;"></img>
-
                     <el-divider content-position="center"></el-divider>
-                    <br></br>
                     <font face="微软雅黑" color="gray" size="5" style="font-weight:550;">配置</font>
                     <el-divider content-position="right">
                         <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
@@ -109,7 +105,7 @@
             <el-aside width="500px">
                 <el-divider content-position="center">日志</el-divider>
                 <textarea rows="3" cols="20"
-                    style="margin-right:10px;width:98%;height:1110px;resize: none;outline:none;border:solid 1px #ccc; "
+                    style="margin-right:10px;width:98%;height:880px;resize: none;outline:none;border:solid 1px #ccc; "
                     readonly="readonly">{{logger}}</textarea>
             </el-aside>
         </el-container>
