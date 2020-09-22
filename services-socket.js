@@ -50,9 +50,6 @@ wss.on('error', (ws) => {
 
 wss.on('connection', function (ws) {
     console.log('client connected');
-    ws.on('open', (ws) => {
-        console.log('opend!!!!!')
-    });
     syscState(ws);
     clients.push(ws);
     ws.on('message', function (message) {
