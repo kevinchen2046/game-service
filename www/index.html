@@ -139,7 +139,7 @@
                 this.ws = new WebSocket("ws://192.168.0.30:14739");
                 this.ws.onopen = (e) => {
                     console.log('Connection to server opened');
-                    ws.send(JSON.stringify({ build: 'state'  ,historyid:this.historyid}));
+                    this.ws.send(JSON.stringify({ build: 'state'  ,historyid:this.historyid}));
                 }
                 this.ws.onmessage = (msg) => {
                     var data = JSON.parse(msg);
