@@ -24,83 +24,94 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- 引入组件库 -->
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.1/TweenMax.min.js"> </script>
 </head>
 
 <body>
     <div id="app">
         <el-container>
+            <el-container>
+                <el-main>
+                    <img src='./logo.png' style="margin-left: 20px;margin-top: 20px;"></img>
+                    <img src='./gamelogo.png' style="margin-left: 20px;margin-top: 20px;"></img>
 
-            <el-main>
-                <el-divider content-position="center">
-                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建配置 |</font>
-                    <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="task.config.isbuild?'el-icon-loading':'el-icon-sugar'" :disabled="disabled"
-                            @click="buildconfig()" circle>
-                        </el-button>
-                    </el-tooltip>
-                </el-divider>
-                <br></br>
-                <el-steps :active="task.config.phase" simple style="margin-top: 20px">
-                    <el-step title="更新XLS"></el-step>
-                    <el-step title="导出表"></el-step>
-                    <el-step title="提交到客户端"></el-step>
-                    <el-step title="提交到服务端"></el-step>
-                    <el-step title="结束"></el-step>
-                </el-steps>
-                <br></br>
-                <el-divider content-position="center">
-                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建客户端 |</font>
-                    <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="task.client.isbuild?'el-icon-loading':'el-icon-grape'" :disabled="disabled"
-                            @click="buildclient()" circle></el-button>
-                    </el-tooltip>
-                </el-divider>
-                <br></br>
-                <el-steps :active="task.client.phase" simple style="margin-top: 20px">
-                    <el-step title="更新Client"></el-step>
-                    <el-step title="编译"></el-step>
-                    <el-step title="结束"></el-step>
-                </el-steps>
-                <br></br>
-                <el-divider content-position="center">
-                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">构建服务端 |</font>
-                    <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="task.server.isbuild?'el-icon-loading':'el-icon-apple'" :disabled="disabled"
-                            @click="buildserver()" circle></el-button>
-                    </el-tooltip>
-                </el-divider>
-                <br></br>
-                <el-steps :active="task.server.phase" simple style="margin-top: 20px">
-                    <el-step title="更新Server"></el-step>
-                    <el-step title="编译"></el-step>
-                    <el-step title="结束"></el-step>
-                </el-steps>
-                <br></br>
-                <el-divider content-position="center">
-                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;font-style:italic">全部构建 |</font>
-                    <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                        <el-button type="primary" :icon="task.all.isbuild?'el-icon-loading':'el-icon-cold-drink'" :disabled="disabled"
-                            @click="buildall()" circle></el-button>
-                    </el-tooltip>
-                </el-divider>
-                <br></br>
-                <el-steps :active="task.all.phase" simple style="margin-top: 20px">
-                    <el-step title="更新XLS"></el-step>
-                    <el-step title="更新Client"></el-step>
-                    <el-step title="更新Server"></el-step>
-                    <el-step title="导出表"></el-step>
-                    <el-step title="提交到Client"></el-step>
-                    <el-step title="提交到Server"></el-step>
-                    <el-step title="编译Client"></el-step>
-                    <el-step title="编译Server"></el-step>
-                    <el-step title="结束"></el-step>
-                </el-steps>
-            </el-main>
+                    <el-divider content-position="center"></el-divider>
+                    <br></br>
+                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;">配置</font>
+                    <el-divider content-position="right">
+                        <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
+                            <el-button type="primary" :icon="task.config.isbuild?'el-icon-loading':'el-icon-sugar'"
+                                :disabled="disabled" @click="buildconfig()" round>Build</el-button>
+                        </el-tooltip>
+                    </el-divider>
 
-            <el-footer>
-                <el-divider content-position="left">日志</el-divider>
-                <textarea rows="3" cols="20" style="width:100%;height:290px;resize: none;outline:none;border:solid 1px #ccc; " readonly="readonly">{{logger}}</textarea>
-            </el-footer>
+                    <el-steps :active="task.config.phase" simple style="margin-top: 20px">
+                        <el-step title="更新XLS"></el-step>
+                        <el-step title="导出表"></el-step>
+                        <el-step title="提交到客户端"></el-step>
+                        <el-step title="提交到服务端"></el-step>
+                        <el-step title="结束"></el-step>
+                    </el-steps>
+                    <br></br>
+                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;">客户端</font>
+                    <el-divider content-position="right">
+                        <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
+                            <el-button type="success" :icon="task.client.isbuild?'el-icon-loading':'el-icon-grape'"
+                                :disabled="disabled" @click="buildclient()" round>Build</el-button>
+                        </el-tooltip>
+                    </el-divider>
+
+                    <el-steps :active="task.client.phase" simple style="margin-top: 20px">
+                        <el-step title="更新Client"></el-step>
+                        <el-step title="编译"></el-step>
+                        <el-step title="结束"></el-step>
+                    </el-steps>
+                    <br></br>
+                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;">服务端 </font>
+                    <el-divider content-position="right">
+                        <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
+                            <el-button type="primary" :icon="task.server.isbuild?'el-icon-loading':'el-icon-apple'"
+                                :disabled="disabled" @click="buildserver()" round>Build</el-button>
+                        </el-tooltip>
+                    </el-divider>
+
+                    <el-steps :active="task.server.phase" simple style="margin-top: 20px">
+                        <el-step title="更新Server"></el-step>
+                        <el-step title="编译"></el-step>
+                        <el-step title="结束"></el-step>
+                    </el-steps>
+                    <br></br>
+                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;">全部构建</font>
+                    <el-divider content-position="right">
+                        <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
+                            <el-button type="success" :icon="task.all.isbuild?'el-icon-loading':'el-icon-cold-drink'"
+                                :disabled="disabled" @click="buildall()" round>Build</el-button>
+                        </el-tooltip>
+                    </el-divider>
+
+                    <el-steps :active="task.all.phase" simple style="margin-top: 20px">
+                        <el-step title="更新XLS"></el-step>
+                        <el-step title="更新Client"></el-step>
+                        <el-step title="更新Server"></el-step>
+                        <el-step title="导出表"></el-step>
+                        <el-step title="提交到Client"></el-step>
+                        <el-step title="提交到Server"></el-step>
+                        <el-step title="编译Client"></el-step>
+                        <el-step title="编译Server"></el-step>
+                        <el-step title="结束"></el-step>
+                    </el-steps>
+                </el-main>
+
+                <el-footer style="text-align: center;color: #888888;">
+                    {{word}}
+                </el-footer>
+            </el-container>
+            <el-aside width="500px">
+                <el-divider content-position="center">日志</el-divider>
+                <textarea rows="3" cols="20"
+                    style="margin-right:10px;width:98%;height:1110px;resize: none;outline:none;border:solid 1px #ccc; "
+                    readonly="readonly">{{logger}}</textarea>
+            </el-aside>
         </el-container>
     </div>
     <script>
@@ -108,7 +119,7 @@
             el: '#app',
             data: {
                 logger: 'logger',
-                disabled:true,
+                disabled: true,
                 curtask: null,
                 task: {
                     config: {
@@ -132,23 +143,66 @@
                         phase: 0
                     },
                 },
+                words: [
+                    "为天下苍生，太沉重了。就为了自己，好吗？（奇经）",
+                    "天神的责任，就是守护世间正道。什么是正道？是不会随时代变迁的一种价值。乌云纵使有时会遮天蔽日。但黑的东西不会变成白。这是每个天神心中不变的价值和信念。与内心的领悟、灵性的提升无关……暗魂就是暗魂。暗魂就是没格调。有自尊自重的天神岂可与你为伍！",
+                    "对所有事情都保持中立，实则助长邪恶",
+                    "当生活压迫到你窒息的时候。每天就只有短暂的休息时间，可以忘记痛苦。",
+                    "无知是一切灾祸的根源",
+                    "打败我？这个条件太苛刻，几乎不可能做到。（罗睺）",
+                    "男人就该做一件轰轰烈烈的事。（猪八戒）",
+                    "我睡了十六年，这一句惊醒了我！我，睡够了！（唐三藏）",
+                    "人生就是一连串的遗憾，有些话我遗憾过去没有对你说，太迟了，现在什么也不必再说。（沙悟净）",
+                    "在云外天绕了一圈回来，应该不会太迟吧....（三眼神将）"
+                ],
+                wordprogress: 0,
+                word: '',
                 ws: null
             },
             mounted: function () {
+
+                function tweentext() {
+                    this.wordprogress = 0;
+                    var result = this.words[(Math.random() * this.words.length) >> 0];
+                    TweenLite.to(this, 1, { wordprogress: 1, onUpdate: updatetext.bind(this), onUpdateParams: [result], ease: Elastic.easeInOut });
+                }
+                function updatetext(result) {
+                    if (this.wordprogress == 1) {
+                        this.word = result;
+                        return;
+                    }
+                    var chartotal = this.word.length + ((((result.length - this.word.length)) * this.wordprogress) >> 0);
+                    var fixtotal = ((result.length * this.wordprogress)* this.wordprogress) >> 0;
+                    var chars = '';
+                    for (var i = 0; i < chartotal; i++) {
+                        if (i < fixtotal) {
+                            chars += result.charAt(i);
+                        } else {
+                            chars += this.word.charAt((Math.random() * this.word.length) >> 0);
+                        }
+                    }
+                    this.word = chars;
+                }
+
+                tweentext.call(this);
+                setInterval(() => {
+                    tweentext.call(this);
+                }, 5000)
+
                 this.ws = new WebSocket("ws://192.168.0.30:14739");
                 this.ws.onopen = (e) => {
                     console.log('Connection to server opened');
-                    this.ws.send(JSON.stringify({ build: 'state'  }));
+                    this.ws.send(JSON.stringify({ build: 'state' }));
                 }
                 this.ws.onmessage = (msg) => {
                     var data = JSON.parse(msg.data);
-                    switch(data.type){
+                    switch (data.type) {
                         case 'state':
-                        this.update(data);
-                        break;
+                            this.update(data);
+                            break;
                         case 'log':
-                        this.updatelog(data.content);
-                        break;
+                            this.updatelog(data.content);
+                            break;
                     }
                 }
             },
@@ -173,7 +227,7 @@
                 },
                 update: function (data) {
                     console.log(data);
-                    this.disabled=false;
+                    this.disabled = false;
                     this.task.config.isbuild = data.task.config.isrun;
                     this.task.config.phase = data.task.config.phase;
 
@@ -186,7 +240,7 @@
                     this.task.all.isbuild = data.task.all.isrun;
                     this.task.all.phase = data.task.all.phase;
                 },
-                updatelog(content){
+                updatelog(content) {
                     this.logger += '\n' + decodeURI(content);
                 },
                 buildconfig: function () {
