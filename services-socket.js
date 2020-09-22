@@ -8,23 +8,23 @@ logger.recorde = true;
 
 var WebSocketServer = ws.Server;
 var wss = new WebSocketServer({ port: config.appport["build-service"] });
-var clients=[];
+var clients = [];
 function syscState(ws) {
     ws.send(JSON.stringify({
-        type:'state',
+        type: 'state',
         task: task._taskstate,
     }))
 }
 
-task.statechange=function(){
-    console.log('task statechange:',clients.length);
-    for(var ws of clients){
+task.statechange = function () {
+    console.log('task statechange:', clients.length);
+    for (var ws of clients) {
         syscState(ws);
     }
 }
-logger.addhandler=function(content,id){
-    console.log('log add:',content);
-    for(var ws of clients){
+logger.addhandler = function (content, id) {
+    console.log('log add:', content);
+    for (var ws of clients) {
         ws.send(JSON.stringify({
             type: 'log',
             id: id,
@@ -33,26 +33,28 @@ logger.addhandler=function(content,id){
     }
 }
 
-wss.on('close',(ws)=>{
-    var index=clients.indexOf(ws);
-    if(index>=0){
-        clients.splice(index,1);
+wss.on('close', (ws) => {
+    var index = clients.indexOf(ws);
+    if (index >= 0) {
+        clients.splice(index, 1);
         console.log('client close.');
     }
 })
-wss.on('error',(ws)=>{
-    var index=clients.indexOf(ws);
-    if(index>=0){
-        clients.splice(index,1);
+wss.on('error', (ws) => {
+    var index = clients.indexOf(ws);
+    if (index >= 0) {
+        clients.splice(index, 1);
         console.log('client close.');
     }
 })
+
 wss.on('connection', function (ws) {
     console.log('client connected');
-    ws.on('open',()=>{
-        syscState(ws);   
-        clients.push(ws); 
+    ws.on('open', (ws) => {
+        console.log('opend!!!!!')
     });
+    syscState(ws);
+    clients.push(ws);
     ws.on('message', function (message) {
         var msg = JSON.parse(message);
         console.log(message);
