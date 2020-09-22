@@ -57,7 +57,7 @@ wss.on('connection', function (ws) {
             case 'resource':
                 task.exec(msg.build)
                 break;
-            case state:
+            case "state":
                 break;
         }
         syscState(ws);
