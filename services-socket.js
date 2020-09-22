@@ -22,11 +22,13 @@ task.statechange=function(){
     }
 }
 logger.addhandler=function(content,id){
-    ws.send(JSON.stringify({
-        type: 'log',
-        id: id,
-        log: content
-    }));
+    for(var ws of clients){
+        ws.send(JSON.stringify({
+            type: 'log',
+            id: id,
+            log: content
+        }));
+    }
 }
 
 wss.on('close',(ws)=>{
