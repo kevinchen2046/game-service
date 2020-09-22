@@ -1,7 +1,8 @@
 <head>
     <meta charset="utf-8">
     <title>西行记自动构建</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="full-screen" content="true" />
     <meta name="screen-orientation" content="portrait" />
@@ -31,10 +32,12 @@
         <el-container>
             <el-container>
                 <el-main>
-                    <img src='./logo.png' style="margin-left: 20px;margin-top: 20px;"></img>
-                    <img src='./gamelogo.png' style="margin-left: 20px;margin-top: 20px;"></img>
-                    <el-divider content-position="center"></el-divider>
-                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;">配置</font>
+                    <span>
+                        <img src='./logo.png' style="margin-top: 0px;width:130px;"></img>
+                        <img src='./gamelogo.png' style="margin-left: 20px;margin-top: 0px;width:100px;"></img>
+                    </span>
+                    <br></br>
+                    <font face="微软雅黑" color="gray" size="4" style="font-weight:550;">配置</font>
                     <el-divider content-position="right">
                         <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
                             <el-button type="primary" :icon="task.config.isbuild?'el-icon-loading':'el-icon-sugar'"
@@ -50,10 +53,26 @@
                         <el-step title="结束"></el-step>
                     </el-steps>
                     <br></br>
-                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;">客户端</font>
+                    <font face="微软雅黑" color="gray" size="4" style="font-weight:550;">协议</font>
                     <el-divider content-position="right">
                         <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                            <el-button type="success" :icon="task.client.isbuild?'el-icon-loading':'el-icon-grape'"
+                            <el-button type="success" :icon="task.proto.isbuild?'el-icon-loading':'el-icon-grape'"
+                                :disabled="disabled" @click="buildproto()" round>Build</el-button>
+                        </el-tooltip>
+                    </el-divider>
+
+                    <el-steps :active="task.proto.phase" simple style="margin-top: 20px">
+                        <el-step title="更新Protos"></el-step>
+                        <el-step title="生成"></el-step>
+                        <el-step title="提交到客户端"></el-step>
+                        <el-step title="提交到服务端"></el-step>
+                        <el-step title="结束"></el-step>
+                    </el-steps>
+                    <br></br>
+                    <font face="微软雅黑" color="gray" size="4" style="font-weight:550;">客户端</font>
+                    <el-divider content-position="right">
+                        <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
+                            <el-button type="primary" :icon="task.client.isbuild?'el-icon-loading':'el-icon-grape'"
                                 :disabled="disabled" @click="buildclient()" round>Build</el-button>
                         </el-tooltip>
                     </el-divider>
@@ -64,10 +83,10 @@
                         <el-step title="结束"></el-step>
                     </el-steps>
                     <br></br>
-                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;">服务端 </font>
+                    <font face="微软雅黑" color="gray" size="4" style="font-weight:550;">服务端 </font>
                     <el-divider content-position="right">
                         <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                            <el-button type="primary" :icon="task.server.isbuild?'el-icon-loading':'el-icon-apple'"
+                            <el-button type="success" :icon="task.server.isbuild?'el-icon-loading':'el-icon-apple'"
                                 :disabled="disabled" @click="buildserver()" round>Build</el-button>
                         </el-tooltip>
                     </el-divider>
@@ -78,10 +97,10 @@
                         <el-step title="结束"></el-step>
                     </el-steps>
                     <br></br>
-                    <font face="微软雅黑" color="gray" size="5" style="font-weight:550;">全部构建</font>
+                    <font face="微软雅黑" color="gray" size="4" style="font-weight:550;">全部构建</font>
                     <el-divider content-position="right">
                         <el-tooltip class="item" effect="dark" content="开始构建" placement="top" style="font-size:150%">
-                            <el-button type="success" :icon="task.all.isbuild?'el-icon-loading':'el-icon-cold-drink'"
+                            <el-button type="primary" :icon="task.all.isbuild?'el-icon-loading':'el-icon-cold-drink'"
                                 :disabled="disabled" @click="buildall()" round>Build</el-button>
                         </el-tooltip>
                     </el-divider>
@@ -106,10 +125,11 @@
             <el-aside width="500px">
                 <el-divider content-position="center">日志
                     <el-tooltip class="item" effect="dark" content="清空日志" placement="top">
-                        <el-button type="warning" icon="el-icon-delete" style="margin-right:0px" size="mini" @click="clearlog()" circle></el-button>
+                        <el-button type="warning" icon="el-icon-delete" style="margin-right:0px" size="mini"
+                            @click="clearlog()" circle></el-button>
                     </el-tooltip>
                 </el-divider>
-                
+
                 <textarea rows="3" cols="20"
                     style="margin-right:10px;width:98%;height:880px;resize: none;outline:none;border:solid 1px #ccc; "
                     readonly="readonly">{{logger}}</textarea>
@@ -125,6 +145,11 @@
                 curtask: null,
                 task: {
                     config: {
+                        maxtask: 5,
+                        isbuild: false,
+                        phase: 0
+                    },
+                    proto: {
                         maxtask: 5,
                         isbuild: false,
                         phase: 0
@@ -174,7 +199,7 @@
                         return;
                     }
                     var chartotal = this.word.length + ((((result.length - this.word.length)) * this.wordprogress) >> 0);
-                    var fixtotal = ((result.length * this.wordprogress)* this.wordprogress) >> 0;
+                    var fixtotal = ((result.length * this.wordprogress) * this.wordprogress) >> 0;
                     var chars = '';
                     for (var i = 0; i < chartotal; i++) {
                         if (i < fixtotal) {
@@ -245,8 +270,8 @@
                 updatelog(content) {
                     this.logger += '\n' + decodeURI(content);
                 },
-                clearlog(){
-                    this.logger="";
+                clearlog() {
+                    this.logger = "";
                 },
                 buildconfig: function () {
                     if (this.isbuild()) {
@@ -255,6 +280,14 @@
                     }
                     this.$notify({ message: '开始构建配置', type: 'success' });
                     this.ws.send(JSON.stringify({ build: 'config' }));
+                },
+                buildproto: function () {
+                    if (this.isbuild()) {
+                        this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
+                        return;
+                    }
+                    this.$notify({ message: '开始构建协议', type: 'success' });
+                    this.ws.send(JSON.stringify({ build: 'proto' }));
                 },
                 buildclient: function () {
                     if (this.isbuild()) {
