@@ -109,7 +109,6 @@
             data: {
                 logger: 'logger',
                 disabled:true,
-                historyid: 1,
                 curtask: null,
                 task: {
                     config: {
@@ -139,11 +138,18 @@
                 this.ws = new WebSocket("ws://192.168.0.30:14739");
                 this.ws.onopen = (e) => {
                     console.log('Connection to server opened');
-                    this.ws.send(JSON.stringify({ build: 'state'  ,historyid:this.historyid}));
+                    this.ws.send(JSON.stringify({ build: 'state'  }));
                 }
                 this.ws.onmessage = (msg) => {
                     var data = JSON.parse(msg);
-                    this.update(data);
+                    switch(data.type){
+                        case 'state':
+                        this.update(data);
+                        break;
+                        case 'log':
+
+                        break;
+                    }
                 }
             },
             methods: {
@@ -179,12 +185,9 @@
 
                     this.task.all.isbuild = data.task.all.isrun;
                     this.task.all.phase = data.task.all.phase;
-                    if (data.log) {
-                        this.historyid = data.log[data.log.length - 1].id;
-                        for (var logitem of data.log) {
-                            this.logger += '\n' + decodeURI(logitem.content);
-                        }
-                    }
+                },
+                updatelog(content){
+                    this.logger += '\n' + decodeURI(content);
                 },
                 buildconfig: function () {
                     if (this.isbuild()) {
@@ -192,7 +195,7 @@
                         return;
                     }
                     this.$notify({ message: '开始构建配置', type: 'success' });
-                    this.ws.send(JSON.stringify({ build: 'config' ,historyid:this.historyid}));
+                    this.ws.send(JSON.stringify({ build: 'config' }));
                 },
                 buildclient: function () {
                     if (this.isbuild()) {
@@ -200,7 +203,7 @@
                         return;
                     }
                     this.$notify({ message: '开始构建客户端', type: 'warning' });
-                    this.ws.send(JSON.stringify({ build: 'client' ,historyid:this.historyid}));
+                    this.ws.send(JSON.stringify({ build: 'client' }));
                 },
                 buildserver: function () {
                     if (this.isbuild()) {
@@ -208,7 +211,7 @@
                         return;
                     }
                     this.$notify({ message: '开始构建服务器', type: 'warning' });
-                    this.ws.send(JSON.stringify({ build: 'server' ,historyid:this.historyid}));
+                    this.ws.send(JSON.stringify({ build: 'server' }));
                 },
                 buildall: function () {
                     if (this.isbuild()) {
@@ -216,7 +219,7 @@
                         return;
                     }
                     this.$notify({ message: '开始全部构建', type: 'warning' });
-                    this.ws.send(JSON.stringify({ build: 'all' ,historyid:this.historyid}));
+                    this.ws.send(JSON.stringify({ build: 'all' }));
                 },
                 isbuild: function () {
                     return this.task.config.isbuild || this.task.client.isbuild || this.task.server.isbuild || this.task.all.isbuild

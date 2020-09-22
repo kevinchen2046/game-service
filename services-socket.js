@@ -10,13 +10,9 @@ var WebSocketServer = ws.Server;
 var wss = new WebSocketServer({ port: config.appport["build-service"] });
 var clients=[];
 function syscState(ws) {
-    var lastlog = logger.getLastHistory();
-    var lastlogId = lastlog ? lastlog.id : 1;
-    var startlogId = urlobj.query.historyid ? urlobj.query.historyid : (logger.getFirstHistory() ? logger.getFirstHistory().id : 1);
     ws.send(JSON.stringify({
+        type:'state',
         task: task._taskstate,
-        historyid: lastlog ? lastlog.id : 1,
-        log: (startlogId == lastlogId ? undefined : logger.getHistory(urlobj.query.historyid))
     }))
 }
 
@@ -24,6 +20,13 @@ task.statechange=function(){
     for(var ws of clients){
         syscState(ws);
     }
+}
+logger.addhandler=function(content,id){
+    ws.send(JSON.stringify({
+        type: 'log',
+        id: id,
+        log: content
+    }));
 }
 
 wss.on('close',(ws)=>{
