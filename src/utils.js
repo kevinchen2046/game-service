@@ -52,4 +52,33 @@ module.exports =
                 }
             }
         }
+        /** 
+        * 创建文件夹-强制
+        * @param path 文件夹路径
+        */
+        static createFolder(path) {
+            if (!path) return;
+            path = path.replace(/\\/, '/');
+            path = path.replace(/\/\//, '/');
+            // if (path.indexOf(':')>=0) {
+            //     path = path.substring(path.indexOf(':') + 1, path.length);
+            // }
+            var paths = path.split('/');
+            while (true) {
+                if (!paths[0]) {
+                    paths.shift();
+                    continue;
+                }
+                break;
+            }
+            var fullP = '';
+            for (var p of paths) {
+                fullP += p + '/';
+                //logger.log(fullP);
+                if (!fs.existsSync(fullP)) {
+                    //console.log('create:',fullP);
+                    fs.mkdirSync(fullP);
+                }
+            }
+        }
     }

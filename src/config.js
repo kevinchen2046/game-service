@@ -6,7 +6,13 @@ var config = {
         "excel": "",
         "client-config": "",
         "server-config": "",
-        "server-release-config": ""
+        "server-release-config": "",
+        "proto":"",
+        "client-proto":"",
+        "server-proto":""
+    },
+    "template":{
+        "proto":""
     },
     "appport": {
         "client-service": 0,
