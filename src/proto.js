@@ -135,6 +135,7 @@ module.exports = async function () {
         logger.log('开始解析协议文件...')
         for (var file of files) {
             if (file == '___.ts') continue;
+            if(path.extname(file)!='.ts') continue;
             var content = fs.readFileSync(filePath + '/' + file).toString();
             var filename = file.replace(path.extname(file), '');
             var moduleid = -1;
