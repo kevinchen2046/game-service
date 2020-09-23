@@ -154,10 +154,12 @@ module.exports = async function () {
         var filejs = createjs(results)
 
         logger.log('写入客户端协议...')
+        utils.createFolder(`${config["workpath"]["client-proto"]}`);
         fs.writeFileSync(`${config["workpath"]["client-proto"]}/proto.d.ts`, filets);
         fs.writeFileSync(`${config["workpath"]["client-proto"]}/proto.js`, filejs)
         utils.runCmd(`uglifyjs ${config["workpath"]["client-proto"]}/proto.js -o ${config["workpath"]["client-proto"]}/proto.min.js`, () => {
             logger.log('写入服务端协议...')
+            utils.createFolder(`${config["workpath"]["server-proto"]}`);
             fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.d.ts`, filets);
             fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.js`, filejs.replace('proto.poolenable = true;', 'proto.poolenable = false;'))
             reslove();
