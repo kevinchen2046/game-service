@@ -47,6 +47,8 @@
 
                     <el-steps :active="task.config.phase" simple style="margin-top: 20px">
                         <el-step title="更新XLS"></el-step>
+                        <el-step title="更新Client"></el-step>
+                        <el-step title="更新Server"></el-step>
                         <el-step title="导出表"></el-step>
                         <el-step title="提交到客户端"></el-step>
                         <el-step title="提交到服务端"></el-step>
@@ -63,6 +65,8 @@
 
                     <el-steps :active="task.proto.phase" simple style="margin-top: 20px">
                         <el-step title="更新Protos"></el-step>
+                        <el-step title="更新Client"></el-step>
+                        <el-step title="更新Server"></el-step>
                         <el-step title="生成"></el-step>
                         <el-step title="提交到客户端"></el-step>
                         <el-step title="提交到服务端"></el-step>
@@ -145,12 +149,12 @@
                 curtask: null,
                 task: {
                     config: {
-                        maxtask: 5,
+                        maxtask: 7,
                         isbuild: false,
                         phase: 0
                     },
                     proto: {
-                        maxtask: 5,
+                        maxtask: 7,
                         isbuild: false,
                         phase: 0
                     },

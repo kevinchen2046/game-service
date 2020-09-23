@@ -54,14 +54,20 @@ module.exports = class Task {
         await Task.updatexls();
         Task._taskstate.config.phase = 2;
         Task.statechange && Task.statechange();
-        await Task.exportconfig();
+        await Task.updateclient();
         Task._taskstate.config.phase = 3;
         Task.statechange && Task.statechange();
-        await Task.commitclient();
+        await Task.updateserver()
         Task._taskstate.config.phase = 4;
         Task.statechange && Task.statechange();
-        await Task.commitserver();
+        await Task.exportconfig();
         Task._taskstate.config.phase = 5;
+        Task.statechange && Task.statechange();
+        await Task.commitclient();
+        Task._taskstate.config.phase = 6;
+        Task.statechange && Task.statechange();
+        await Task.commitserver();
+        Task._taskstate.config.phase = 7;
         Task._taskstate.config.isrun = false;
         Task.statechange && Task.statechange();
     }
@@ -73,14 +79,20 @@ module.exports = class Task {
         await Task.updatproto();
         Task._taskstate.proto.phase = 2;
         Task.statechange && Task.statechange();
-        await Task.exportproto();
+        await Task.updateclient();
         Task._taskstate.proto.phase = 3;
         Task.statechange && Task.statechange();
-        await Task.commitclient();
+        await Task.updateserver()
         Task._taskstate.proto.phase = 4;
         Task.statechange && Task.statechange();
-        await Task.commitserver();
+        await Task.exportproto();
         Task._taskstate.proto.phase = 5;
+        Task.statechange && Task.statechange();
+        await Task.commitclient();
+        Task._taskstate.proto.phase = 6;
+        Task.statechange && Task.statechange();
+        await Task.commitserver();
+        Task._taskstate.proto.phase = 7;
         Task._taskstate.proto.isrun = false;
         Task.statechange && Task.statechange();
     }
