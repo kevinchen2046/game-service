@@ -1,93 +1,114 @@
 var fs = require('fs');
 var path = require('path');
 var excel = require('./excel');
+var proto = require('./proto');
 var config = require('./config');
 var utils = require('./utils')
 var logger = require('./logger')
-module.exports=class Task {
-    static statechange=null;
+module.exports = class Task {
+    static statechange = null;
     static _curtask = '';
-    static _taskstate={
-        client:{phase:0,isrun:false},
-        server:{phase:0,isrun:false},
-        config:{phase:0,isrun:false},
-        all:{phase:0,isrun:false}
+    static _taskstate = {
+        client: { phase: 0, isrun: false },
+        server: { phase: 0, isrun: false },
+        config: { phase: 0, isrun: false },
+        proto: { phase: 0, isrun: false },
+        all: { phase: 0, isrun: false }
     };
 
     static async buildall() {
-        Task._taskstate.all.isrun=true;
+        Task._taskstate.all.isrun = true;
         Task._taskstate.all.phase = 1;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.updatexls();
         Task._taskstate.all.phase = 2;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.updateclient();
         Task._taskstate.all.phase = 3;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.updateserver()
         Task._taskstate.all.phase = 4;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.exportconfig();
         Task._taskstate.all.phase = 5;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.commitclient();
         Task._taskstate.all.phase = 6;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.commitserver();
         Task._taskstate.all.phase = 7;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.compileclient();
         Task._taskstate.all.phase = 8;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.commitserver();
         Task._taskstate.all.phase = 9;
-        Task._taskstate.all.isrun=false;
-        Task.statechange&&Task.statechange();
+        Task._taskstate.all.isrun = false;
+        Task.statechange && Task.statechange();
     }
 
     static async buildconfig() {
-        Task._taskstate.config.isrun=true;
+        Task._taskstate.config.isrun = true;
         Task._taskstate.config.phase = 1;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.updatexls();
         Task._taskstate.config.phase = 2;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.exportconfig();
         Task._taskstate.config.phase = 3;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.commitclient();
         Task._taskstate.config.phase = 4;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.commitserver();
         Task._taskstate.config.phase = 5;
-        Task._taskstate.config.isrun=false;
-        Task.statechange&&Task.statechange();
+        Task._taskstate.config.isrun = false;
+        Task.statechange && Task.statechange();
+    }
+
+    static async buildproto() {
+        Task._taskstate.proto.isrun = true;
+        Task._taskstate.proto.phase = 1;
+        Task.statechange && Task.statechange();
+        await Task.updatproto();
+        Task._taskstate.proto.phase = 2;
+        Task.statechange && Task.statechange();
+        await Task.exportproto();
+        Task._taskstate.proto.phase = 3;
+        Task.statechange && Task.statechange();
+        await Task.commitclient();
+        Task._taskstate.proto.phase = 4;
+        Task.statechange && Task.statechange();
+        await Task.commitserver();
+        Task._taskstate.proto.phase = 5;
+        Task._taskstate.proto.isrun = false;
+        Task.statechange && Task.statechange();
     }
 
     static async buildserver() {
-        Task._taskstate.server.isrun=true;
+        Task._taskstate.server.isrun = true;
         Task._taskstate.server.phase = 1;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.updateserver();
         Task._taskstate.server.phase = 2;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.compileserver();
         Task._taskstate.server.phase = 3;
-        Task._taskstate.server.isrun=false;
-        Task.statechange&&Task.statechange();
+        Task._taskstate.server.isrun = false;
+        Task.statechange && Task.statechange();
     }
 
     static async buildclient() {
-        Task._taskstate.client.isrun=true;
+        Task._taskstate.client.isrun = true;
         Task._taskstate.client.phase = 1;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.updateclient();
         Task._taskstate.client.phase = 2;
-        Task.statechange&&Task.statechange();
+        Task.statechange && Task.statechange();
         await Task.compileclient();
         Task._taskstate.client.phase = 3;
-        Task._taskstate.client.isrun=false;
-        Task.statechange&&Task.statechange();
+        Task._taskstate.client.isrun = false;
+        Task.statechange && Task.statechange();
     }
 
     static async compileserver() {
@@ -104,26 +125,31 @@ module.exports=class Task {
 
     static async exportconfig() {
         return new Promise((reslove) => {
-            utils.runCmd(`svn update ${config.workpath.excel}`, () => {
-                logger.cleanfile('config.log');
-                utils.clearFolder(config.workpath["client-config"]);
-                utils.clearFolder(config.workpath["server-config"]);
-                var files = fs.readdirSync(config.workpath.excel);
-                for (var file of files) {
-                    if (path.extname(file) != '.xls') continue;
-                    var result = excel(config.workpath.excel + '/' + file);
-                    for (var resclient of result.clients) {
-                        fs.writeFileSync(config.workpath["client-config"] + '/' + resclient.name + '.txt', resclient.content, 'utf-8');
-                    }
-                    for (var resserver of result.servers) {
-                        fs.writeFileSync(config.workpath["server-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
-                        fs.writeFileSync(config.workpath["server-release-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
-                    }
+            logger.cleanfile('config.log');
+            utils.clearFolder(config.workpath["client-config"]);
+            utils.clearFolder(config.workpath["server-config"]);
+            var files = fs.readdirSync(config.workpath.excel);
+            for (var file of files) {
+                if (path.extname(file) != '.xls') continue;
+                var result = excel(config.workpath.excel + '/' + file);
+                for (var resclient of result.clients) {
+                    fs.writeFileSync(config.workpath["client-config"] + '/' + resclient.name + '.txt', resclient.content, 'utf-8');
                 }
-                logger.log('导出表完成', 'LOG', 'config.log');
-                reslove();
-            });
+                for (var resserver of result.servers) {
+                    fs.writeFileSync(config.workpath["server-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
+                    fs.writeFileSync(config.workpath["server-release-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
+                }
+            }
+            logger.log('导出表完成', 'LOG', 'config.log');
+            reslove();
         });
+    }
+
+    static async exportproto() {
+        utils.clearFolder(config.workpath["client-proto"]);
+        utils.clearFolder(config.workpath["server-proto"]);
+        await proto();
+        logger.log('导出协议完成', 'LOG');
     }
 
     static async updateresource() {
@@ -151,6 +177,13 @@ module.exports=class Task {
         return new Promise((reslove) => {
             logger.log('svn update xls...');
             utils.runCmd(`svn update ${config.workpath.excel}`, reslove);
+        });
+    }
+
+    static async updatproto() {
+        return new Promise((reslove) => {
+            logger.log('svn update proto...');
+            utils.runCmd(`svn update ${config.workpath.proto}`, reslove);
         });
     }
 
@@ -194,6 +227,9 @@ module.exports=class Task {
             case 'config':
                 await Task.buildconfig();
                 break
+            case 'proto':
+                await Task.buildproto();
+                break;
             case 'resource':
                 await Task.updateresource();
                 break;

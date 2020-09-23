@@ -60,6 +60,7 @@ wss.on('connection', function (ws) {
             case 'client':
             case 'server':
             case 'config':
+            case 'proto':
             case 'resource':
                 task.exec(msg.build)
                 break;

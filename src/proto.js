@@ -3,6 +3,7 @@ var path = require('path');
 var fs = require('fs');
 var config = require('./config');
 var utils = require('./utils');
+var logger = require('./logger');
 var template_dts = fs.readFileSync(`${__dirname}/../${config.template.proto}/proto.d.ts`, 'utf-8');
 var template_js = fs.readFileSync(`${__dirname}/../${config.template.proto}/proto.js`, 'utf-8');
 
@@ -131,6 +132,7 @@ module.exports = async function () {
         var filePath = config["workpath"]["proto"];
         var files = fs.readdirSync(filePath);
         var results = {};
+        logger.log('开始解析协议文件...')
         for (var file of files) {
             if (file == '___.ts') continue;
             var content = fs.readFileSync(filePath + '/' + file).toString();
@@ -145,16 +147,20 @@ module.exports = async function () {
             results[name] = parse(content);
             results[name]['__moduleid__'] = moduleid;
         }
+        logger.log('生成定义文件...')
         var filets = createdts(results);
+        logger.log('生成映射文件...')
         var filejs = createjs(results)
 
+        logger.log('写入客户端协议...')
         fs.writeFileSync(`${config["workpath"]["client-proto"]}/proto.d.ts`, filets);
         fs.writeFileSync(`${config["workpath"]["client-proto"]}/proto.js`, filejs)
-
-        fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.d.ts`, filets);
-        fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.js`, filejs.replace('proto.poolenable = true;', 'proto.poolenable = false;'))
-
-        utils.runCmd(`uglifyjs ${config["workpath"]["client-proto"]}/proto.js -o ${config["workpath"]["client-proto"]}/proto.min.js`,reslove);
+        utils.runCmd(`uglifyjs ${config["workpath"]["client-proto"]}/proto.js -o ${config["workpath"]["client-proto"]}/proto.min.js`, () => {
+            logger.log('写入服务端协议...')
+            fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.d.ts`, filets);
+            fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.js`, filejs.replace('proto.poolenable = true;', 'proto.poolenable = false;'))
+            reslove();
+        });
     });
 }
 
