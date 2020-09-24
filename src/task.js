@@ -1,5 +1,4 @@
-var fs = require('fs');
-var path = require('path');
+
 var excel = require('./excel');
 var proto = require('./proto');
 var config = require('./config');
@@ -7,6 +6,7 @@ var utils = require('./utils')
 var logger = require('./logger')
 module.exports = class Task {
     static statechange = null;
+    static _register = null;
     static _curtask = '';
     static _taskstate = {
         client: { phase: 0, isrun: false },
@@ -15,113 +15,6 @@ module.exports = class Task {
         proto: { phase: 0, isrun: false },
         all: { phase: 0, isrun: false }
     };
-
-    static async buildall() {
-        Task._taskstate.all.isrun = true;
-        Task._taskstate.all.phase = 1;
-        Task.statechange && Task.statechange();
-        await Task.updatexls();
-        Task._taskstate.all.phase = 2;
-        Task.statechange && Task.statechange();
-        await Task.updateclient();
-        Task._taskstate.all.phase = 3;
-        Task.statechange && Task.statechange();
-        await Task.updateserver()
-        Task._taskstate.all.phase = 4;
-        Task.statechange && Task.statechange();
-        await Task.exportconfig();
-        Task._taskstate.all.phase = 5;
-        Task.statechange && Task.statechange();
-        await Task.commitclient();
-        Task._taskstate.all.phase = 6;
-        Task.statechange && Task.statechange();
-        await Task.commitserver();
-        Task._taskstate.all.phase = 7;
-        Task.statechange && Task.statechange();
-        await Task.compileclient();
-        Task._taskstate.all.phase = 8;
-        Task.statechange && Task.statechange();
-        await Task.commitserver();
-        Task._taskstate.all.phase = 9;
-        Task._taskstate.all.isrun = false;
-        Task.statechange && Task.statechange();
-    }
-
-    static async buildconfig() {
-        Task._taskstate.config.isrun = true;
-        Task._taskstate.config.phase = 1;
-        Task.statechange && Task.statechange();
-        await Task.updatexls();
-        Task._taskstate.config.phase = 2;
-        Task.statechange && Task.statechange();
-        await Task.updateclient();
-        Task._taskstate.config.phase = 3;
-        Task.statechange && Task.statechange();
-        await Task.updateserver()
-        Task._taskstate.config.phase = 4;
-        Task.statechange && Task.statechange();
-        await Task.exportconfig();
-        Task._taskstate.config.phase = 5;
-        Task.statechange && Task.statechange();
-        await Task.commitclient();
-        Task._taskstate.config.phase = 6;
-        Task.statechange && Task.statechange();
-        await Task.commitserver();
-        Task._taskstate.config.phase = 7;
-        Task._taskstate.config.isrun = false;
-        Task.statechange && Task.statechange();
-    }
-
-    static async buildproto() {
-        Task._taskstate.proto.isrun = true;
-        Task._taskstate.proto.phase = 1;
-        Task.statechange && Task.statechange();
-        await Task.updatproto();
-        Task._taskstate.proto.phase = 2;
-        Task.statechange && Task.statechange();
-        await Task.updateclient();
-        Task._taskstate.proto.phase = 3;
-        Task.statechange && Task.statechange();
-        await Task.updateserver()
-        Task._taskstate.proto.phase = 4;
-        Task.statechange && Task.statechange();
-        await Task.exportproto();
-        Task._taskstate.proto.phase = 5;
-        Task.statechange && Task.statechange();
-        await Task.commitclient();
-        Task._taskstate.proto.phase = 6;
-        Task.statechange && Task.statechange();
-        await Task.commitserver();
-        Task._taskstate.proto.phase = 7;
-        Task._taskstate.proto.isrun = false;
-        Task.statechange && Task.statechange();
-    }
-
-    static async buildserver() {
-        Task._taskstate.server.isrun = true;
-        Task._taskstate.server.phase = 1;
-        Task.statechange && Task.statechange();
-        await Task.updateserver();
-        Task._taskstate.server.phase = 2;
-        Task.statechange && Task.statechange();
-        await Task.compileserver();
-        Task._taskstate.server.phase = 3;
-        Task._taskstate.server.isrun = false;
-        Task.statechange && Task.statechange();
-    }
-
-    static async buildclient() {
-        Task._taskstate.client.isrun = true;
-        Task._taskstate.client.phase = 1;
-        Task.statechange && Task.statechange();
-        await Task.updateclient();
-        Task._taskstate.client.phase = 2;
-        Task.statechange && Task.statechange();
-        await Task.compileclient();
-        Task._taskstate.client.phase = 3;
-        Task._taskstate.client.isrun = false;
-        Task.statechange && Task.statechange();
-    }
 
     static async compileserver() {
         return new Promise((reslove) => {
@@ -136,32 +29,11 @@ module.exports = class Task {
     }
 
     static async exportconfig() {
-        return new Promise((reslove) => {
-            logger.cleanfile('config.log');
-            utils.clearFolder(config.workpath["client-config"]);
-            utils.clearFolder(config.workpath["server-config"]);
-            var files = fs.readdirSync(config.workpath.excel);
-            for (var file of files) {
-                if (path.extname(file) != '.xls') continue;
-                var result = excel(config.workpath.excel + '/' + file);
-                for (var resclient of result.clients) {
-                    fs.writeFileSync(config.workpath["client-config"] + '/' + resclient.name + '.txt', resclient.content, 'utf-8');
-                }
-                for (var resserver of result.servers) {
-                    fs.writeFileSync(config.workpath["server-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
-                    fs.writeFileSync(config.workpath["server-release-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
-                }
-            }
-            logger.log('导出表完成', 'LOG', 'config.log');
-            reslove();
-        });
+        await excel();
     }
 
     static async exportproto() {
-        utils.clearFolder(config.workpath["client-proto"]);
-        utils.clearFolder(config.workpath["server-proto"]);
         await proto();
-        logger.log('导出协议完成', 'LOG');
     }
 
     static async updateresource() {
@@ -223,28 +95,39 @@ module.exports = class Task {
         })
     }
 
+    static async run(list,name) {
+        var list = Task._register[cmdname];
+        Task._taskstate[name].isrun = true;
+        for (var i = 0; i < list.length; i++) {
+            Task._taskstate[name].phase = i + 1;
+            Task.statechange && Task.statechange();
+            await list[i]();
+        }
+        Task._taskstate[name].isrun = false;
+        Task._taskstate[name].phase = list.length;
+        Task.statechange && Task.statechange();
+    }
+
     static async exec(cmdname) {
         if (Task._curtask) return;
+        if (!Task._register) {
+            Task._register = {
+                'all': [Task.updatexls, Task.updateclient, Task.updateserver, Task.exportconfig, Task.compileclient, Task.compileserver, Task.commitclient, Task.commitserver],
+                'config': [Task.updatexls, Task.updateclient, Task.updateserver, Task.exportconfig, Task.commitclient, Task.commitserver],
+                'proto': [Task.updatproto, Task.updateclient, Task.updateserver, Task.exportproto, Task.commitclient, Task.commitserver],
+                'client': [Task.updateclient, Task.compileclient],
+                'server': [Task.updateserver, Task.compileserver]
+            }
+        }
         Task._curtask = cmdname;
-        switch (cmdname) {
-            case 'all':
-                await Task.buildall();
-                break;
-            case 'client':
-                await Task.buildclient();
-                break
-            case 'server':
-                await Task.buildserver();
-                break
-            case 'config':
-                await Task.buildconfig();
-                break
-            case 'proto':
-                await Task.buildproto();
-                break;
-            case 'resource':
-                await Task.updateresource();
-                break;
+        if (Task._register[cmdname]) {
+            Task.run(Task._register[cmdname],cmdname);
+        } else {
+            switch (cmdname) {
+                case 'resource':
+                    await Task.updateresource();
+                    break;
+            }
         }
         Task._curtask = '';
     }

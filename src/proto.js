@@ -133,6 +133,8 @@ class Generater{
 
 module.exports = async function () {
     return new Promise((reslove, reject) => {
+        utils.clearFolder(config.workpath["client-proto"]);
+        utils.clearFolder(config.workpath["server-proto"]);
         var filePath = config["workpath"]["proto"];
         var files = fs.readdirSync(filePath);
         var results = {};
@@ -165,7 +167,8 @@ module.exports = async function () {
             logger.log('写入服务端协议...')
             utils.createFolder(`${config["workpath"]["server-proto"]}`);
             fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.d.ts`, filets);
-            fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.js`, filejs.replace('proto.poolenable = true;', 'proto.poolenable = false;'))
+            fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.js`, filejs.replace('proto.poolenable = true;', 'proto.poolenable = false;'));
+            logger.log('导出协议完成', 'LOG');
             reslove();
         });
     });
