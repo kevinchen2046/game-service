@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "node service-http",
+        "start": "node ./services/socket",
         "proto":"node -e \"require('./src/proto')()\"",
         "config":"node -e \"require('./src/excel')()\""
     },
