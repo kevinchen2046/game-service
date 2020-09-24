@@ -1,8 +1,8 @@
 var ws = require('ws');
-var config = require('./src/config');
-var utils = require('./src/utils')
-var logger = require('./src/logger')
-var task = require('./src/task');
+var config = require('./../src/config');
+var utils = require('./../src/utils')
+var logger = require('./../src/logger')
+var task = require('./../src/task');
 
 logger.recorde = true;
 
