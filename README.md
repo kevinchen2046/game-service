@@ -49,5 +49,5 @@
   - websocket
 ## 启动 
 ```
-node services-socket
+npm run start
 ```

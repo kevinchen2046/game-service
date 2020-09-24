@@ -62,4 +62,5 @@ typings/
 
 .alm/
 
+template/proto/out/
 out/
