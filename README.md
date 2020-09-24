@@ -43,7 +43,7 @@
 - 客户端访问服务
   - http-server 
 - 控制台访问页面
-  - vue.js
+  - vue2.0 脚手架
   - element-ui
 - 控制台后端服务
   - websocket
