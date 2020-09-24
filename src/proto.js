@@ -7,7 +7,7 @@ var logger = require('./logger');
 var template_dts = fs.readFileSync(`${__dirname}/../${config.template.proto}/proto.d.ts`, 'utf-8');
 var template_js = fs.readFileSync(`${__dirname}/../${config.template.proto}/proto.js`, 'utf-8');
 
-class TypeScriptParser{
+class TypeScriptParser {
     static parse(content) {
         var clazznames = content.match(/(?<=class)([\S\s]*?)(?={)/g);
         var clazzcontents = content.match(/(?<={)([\S\s]*?)(?=})/g);
@@ -46,21 +46,19 @@ class TypeScriptParser{
     }
 }
 
-class Generater{
+class Generater {
+
+    static __Substring(source,startTag, endTag) {
+        var start = startTag;
+        var end = endTag;
+        var sindex = source.indexOf(start) + start.length;
+        var eindex = source.indexOf(end) - 1;
+        return source.substring(sindex, eindex);
+    }
+
     static createdts(files) {
-        var start = '///////////////////////GENERATE-START/////////////////////';
-        var end = '///////////////////////GENERATE-END/////////////////////';
-        var sindex = template_dts.indexOf(start) + start.length;
-        var eindex = template_dts.indexOf(end) - 1;
-        var replacetext = template_dts.substring(sindex, eindex);
-        var moduleformat = `
-    declare namespace proto.{modulename} {
-        {content}
-    }`
-        var classformat = `
-        class {classname} extends proto.Message {
-            {content}
-        }`
+        var moduleformat = `\r\ndeclare namespace proto.{modulename} {\r\n        {content}\r\n}`
+        var classformat = `\r\n    class {classname} extends proto.Message {\r\n            {content}\r\n    }`
         var contents = [];
         for (var name in files) {
             var file = files[name];
@@ -80,29 +78,12 @@ class Generater{
             }
             contents.push(moduleformat.replace('{modulename}', name).replace('{content}', filecontents.join('\r\n    ')))
         }
+        var replacetext = Generater.__Substring(template_dts,'///////////////////////GENERATE-START/////////////////////','///////////////////////GENERATE-END/////////////////////');
         return template_dts.replace(replacetext, contents.join('\r\n'));
     }
-    
+
     static createjs(files) {
-        var start = '///////////////////////GENERATE-START/////////////////////';
-        var end = '///////////////////////GENERATE-END/////////////////////';
-        var sindex = template_js.indexOf(start) + start.length;
-        var eindex = template_js.indexOf(end);
-        var replacedefinetext = template_js.substring(sindex, eindex);
-    
-        start = '///////////////////////Map-START[Server]/////////////////////';
-        end = '///////////////////////Map-End[Server]/////////////////////'
-        sindex = template_js.indexOf(start) + start.length;
-        eindex = template_js.indexOf(end);
-        var replacemaptext = template_js.substring(sindex, eindex);
-    
-        var moduleformat = `
-        var {modulename};
-        (function (bag) {
-            {modulename}.__moduleid__ = {moduleid};
-        {content}
-        })({modulename} || ({modulename} = {}));
-        proto.{modulename} = {modulename};`;
+        var moduleformat = `\r\n    var {modulename};\r\n    (function (bag) {\r\n    {modulename}.__moduleid__ = {moduleid};\r\n    {content}\r\n    })({modulename} || ({modulename} = {}));\r\n    proto.{modulename} = {modulename};`;
         var classformat = `    {modulename}.{classname} = {msgid};`;
         var mapformat = `    proto.__map__[{modulename}.{classname}] = bag.__moduleid__;`
         var contents = [];
@@ -117,7 +98,7 @@ class Generater{
                 var msgid;
                 for (var filed of fileds) {
                     if (filed.filed == '__cmd__') {
-                        msgid = filed.type;
+                        msgid = file['__moduleid__']+filed.type;
                         continue;
                     }
                 }
@@ -126,7 +107,8 @@ class Generater{
             }
             contents.push(moduleformat.replace(/{modulename}/g, name).replace('{moduleid}', file['__moduleid__']).replace('{content}', filecontents.join('\r\n    ')))
         }
-        console.log(mapcontents)
+        var replacedefinetext = Generater.__Substring(template_js,'///////////////////////GENERATE-START/////////////////////','///////////////////////GENERATE-END/////////////////////');
+        var replacemaptext= Generater.__Substring(template_js,'///////////////////////Map-START[Server]/////////////////////','///////////////////////Map-End[Server]/////////////////////');
         return template_js.replace(replacedefinetext, contents.join('\r\n') + '\r\n    ').replace(replacemaptext, '\r\n' + mapcontents.join('\r\n') + '\r\n    ');
     }
 }
@@ -141,7 +123,7 @@ module.exports = async function () {
         logger.log('开始解析协议文件...')
         for (var file of files) {
             if (file == '___.ts') continue;
-            if(path.extname(file)!='.ts') continue;
+            if (path.extname(file) != '.ts') continue;
             var content = fs.readFileSync(filePath + '/' + file).toString();
             var filename = file.replace(path.extname(file), '');
             var moduleid = -1;
@@ -162,12 +144,12 @@ module.exports = async function () {
         logger.log('写入客户端协议...')
         utils.createFolder(`${config["workpath"]["client-proto"]}`);
         fs.writeFileSync(`${config["workpath"]["client-proto"]}/proto.d.ts`, filets);
-        fs.writeFileSync(`${config["workpath"]["client-proto"]}/proto.js`, filejs)
+        fs.writeFileSync(`${config["workpath"]["client-proto"]}/proto.js`, filejs.replace('//#Server\r\nexports.proto = proto;',''))
         utils.runCmd(`uglifyjs ${config["workpath"]["client-proto"]}/proto.js -o ${config["workpath"]["client-proto"]}/proto.min.js`, () => {
             logger.log('写入服务端协议...')
             utils.createFolder(`${config["workpath"]["server-proto"]}`);
             fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.d.ts`, filets);
-            fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.js`, filejs.replace('proto.poolenable = true;', 'proto.poolenable = false;'));
+            fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.js`, filejs.replace('proto.poolenable = true;', 'proto.poolenable = false;').replace('//#Client\r\nwindow.proto = proto;',''));
             logger.log('导出协议完成', 'LOG');
             reslove();
         });

@@ -95,4 +95,6 @@ var proto;
 
 //#Server
 exports.proto = proto;
+//#Client
+window.proto = proto;
 
