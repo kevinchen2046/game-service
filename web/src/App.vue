@@ -94,7 +94,7 @@
             </el-footer>
         </el-container>
         <el-aside width="500px">
-            <Logger/>
+            <Logger ref="logger"/>
         </el-aside>
     </el-container>
 </template>
@@ -156,7 +156,7 @@ export default {
                     this.update(data);
                     break;
                 case 'log':
-                    this.updatelog(data.content);
+                    this.$refs.logger.add(data.content);
                     break;
             }
         }
@@ -175,9 +175,6 @@ export default {
             this.task.server.phase = data.task.server.phase;
             this.task.all.isbuild = data.task.all.isrun;
             this.task.all.phase = data.task.all.phase;
-        },
-        updatelog(content) {
-            this.logger += '\n' + decodeURI(content);
         },
         buildconfig: function () {
             if (this.isbuild()) {

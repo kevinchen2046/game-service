@@ -33,9 +33,12 @@ export default {
     };
   },
   methods: {
-    clear(){
+    add(content) {
+      this.logger += '\n' + decodeURI(content);
+    },
+    clear() {
       this.logger = "";
-    }
-  }
+    },
+  },
 };
 </script>
