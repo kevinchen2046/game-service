@@ -96,7 +96,7 @@ module.exports = class Task {
     }
 
     static async run(list,name) {
-        var list = Task._register[cmdname];
+        var list = Task._register[name];
         Task._taskstate[name].isrun = true;
         for (var i = 0; i < list.length; i++) {
             Task._taskstate[name].phase = i + 1;
