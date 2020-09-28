@@ -54,7 +54,7 @@ wss.on('connection', function (ws) {
     ws.on('message', function (message) {
         try {
             var msg = JSON.parse(message);
-            logger.log(message);
+            console.log(message);
             switch (msg.build) {
                 case 'all':
                 case 'client':
