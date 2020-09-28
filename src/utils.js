@@ -16,7 +16,8 @@ module.exports =
             }
             if (operation.log == undefined) operation.log = true;
             if (operation.recorde == undefined) operation.recorde = true;
-            operation.recorde ? logger.log('执行命令:' + operation.cmd) : console.log('执行命令:' + operation.cmd);
+            var logout=operation.recorde ? logger.log:console.log;
+            logout('开始执行命令:' + operation.cmd)
             //var iconv = require('iconv-lite');
             var childprocess = childProcess.exec(operation.cmd, {
                 encoding: 'buffer',
@@ -26,13 +27,13 @@ module.exports =
             function stdotHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));
                 if (operation.log) {
-                    operation.recorde ? logger.log(data.toString()) : console.log(data.toString());
+                    logout(data.toString())
                 }
             }
             function stderrHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));	
                 if (operation.log) {
-                    operation.recorde ? logger.log(data.toString()) : console.log(data.toString());
+                    logout(data.toString())
                 }
             }
             function exitHandler(code) {
@@ -44,10 +45,11 @@ module.exports =
                 childprocess.removeListener('disconnect', exitHandler);
                 if (code != 0) {
                     if (operation.log) {
-                        operation.recorde ? logger.log('命令执行错误:' + operation.cmd, 'ERROR') : console.error('命令执行错误:' + operation.cmd);
+                        logout('命令执行错误:' + operation.cmd, 'ERROR');
                     }
                 }
                 method && method();
+                logout('结束命令执行:' + operation.cmd);
             }
             childprocess.stdout.on('data', stdotHandler);
             childprocess.stderr.on('data', stderrHandler);

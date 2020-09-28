@@ -89,7 +89,7 @@ module.exports = function () {
     logger.cleanfile('config.log');
     utils.clearFolder(config.workpath["client-config"]);
     utils.clearFolder(config.workpath["server-config"]);
-    var cache = fs.existsSync(`${__dirname}/../.configcache`)?fs.readFileSync(`${__dirname}/../.configcache`,'utf-8'):{};
+    var cache = fs.existsSync(`${__dirname}/../.configcache`)?JSON.parse(fs.readFileSync(`${__dirname}/../.configcache`,'utf-8')):{};
     var files = fs.readdirSync(config.workpath.excel);
     for (var file of files) {
         if (path.extname(file) != '.xls') continue;
