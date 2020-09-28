@@ -23,7 +23,7 @@ var config = {
         "build-service": 0
     }
 }
-config = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`, 'utf-8'));
+config = JSON.parse(fs.readFileSync(`${__dirname}/../../package.json`, 'utf-8'));
 // config.workpath.proto=`${__dirname}/../proto`;
 // config.workpath['client-proto']=`${__dirname}/../out/client`;
 // config.workpath['server-proto']=`${__dirname}/../out/server`;

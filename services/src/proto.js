@@ -4,8 +4,8 @@ var fs = require('fs');
 var config = require('./config');
 var utils = require('./utils');
 var logger = require('./logger');
-var template_dts = fs.readFileSync(`${__dirname}/../${config.template.proto}/proto.d.ts`, 'utf-8');
-var template_js = fs.readFileSync(`${__dirname}/../${config.template.proto}/proto.js`, 'utf-8');
+var template_dts = fs.readFileSync(`${__dirname}/../../${config.template.proto}/proto.d.ts`, 'utf-8');
+var template_js = fs.readFileSync(`${__dirname}/../../${config.template.proto}/proto.js`, 'utf-8');
 
 class TypeScriptParser {
     static parse(content) {
