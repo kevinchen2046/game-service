@@ -144,12 +144,14 @@ export default {
         ws: null
     }},
     mounted: function () {
+        console.log('connecting..',`ws://${dataconfig.host}:${dataconfig.port}`);
         this.ws = new WebSocket(`ws://${dataconfig.host}:${dataconfig.port}`);
         this.ws.onopen = () => {
             console.log('Connection to server opened');
             this.ws.send(JSON.stringify({ build: 'state' }));
         }
         this.ws.onmessage = (msg) => {
+            console.log('recive message:',msg);
             var data = JSON.parse(msg.data);
             switch (data.type) {
                 case 'state':
