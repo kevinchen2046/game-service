@@ -18,7 +18,10 @@ module.exports = class Task {
 
     static async compileserver() {
         return new Promise((reslove) => {
-            utils.runCmd(`tsc --build ${config.workpath.server}/tsconfig_build.json`, (log) => reslove(log));
+            utils.runCmd({
+                cmd:`tsc --build ${config.workpath.server}/tsconfig_build.json`,
+                timeout:10*1000,
+            }, (log) => reslove(log));
         });
     }
 

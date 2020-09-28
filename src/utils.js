@@ -1,45 +1,54 @@
 var fs = require('fs');
 var logger = require('./logger');
-
+var childProcess = require('child_process');
 module.exports =
     class Util {
-        static runCmd(cmd, method, log, recorde) {
-            if (log == undefined) log = true;
-            if (recorde == undefined) recorde = true;
-            recorde ? logger.log('执行命令:' + cmd) : console.log('执行命令:' + cmd);
-            var childProcess = require('child_process');
+        /**
+         * 执行命令
+         * @param {cmd:string,timeout:number,log:boolean, recorde:boolean} operation 
+         * @param {Function} method 
+         */
+        static runCmd(operation, method) {
+            if(typeof operation =='string'){
+                operation={
+                    cmd:operation
+                }
+            }
+            if (operation.log == undefined) operation.log = true;
+            if (operation.recorde == undefined) operation.recorde = true;
+            operation.recorde ? logger.log('执行命令:' + cmd) : console.log('执行命令:' + operation.cmd);
             //var iconv = require('iconv-lite');
-            var handler = childProcess.exec(cmd, {
+            var childprocess = childProcess.exec(operation.cmd, {
                 encoding: 'buffer',
-                timeout: 0, /*子进程最长执行时间 */
+                timeout: operation.timeout?operation.timeout:0, /*子进程最长执行时间 */
                 maxBuffer: 1024 * 1024
             });
             function stdotHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));
-                if(log){
-                    recorde ? logger.log(data.toString()) : console.log(data.toString());
+                if(operation.log){
+                    operation.recorde ? logger.log(data.toString()) : console.log(data.toString());
                 }
             }
             function stderrHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));	
-                if(log){
-                    recorde ? logger.log(data.toString()) : console.log(data.toString());
+                if(operation.log){
+                    operation.recorde ? logger.log(data.toString()) : console.log(data.toString());
                 }
             }
             function exitHandler(code) {
-                handler.stdout.removeListener('data', stdotHandler);
-                handler.stderr.removeListener('data', stderrHandler);
-                handler.removeListener('exit', exitHandler);
+                childprocess.stdout.removeListener('data', stdotHandler);
+                childprocess.stderr.removeListener('data', stderrHandler);
+                childprocess.removeListener('exit', exitHandler);
                 if (code != 0) {
-                    if(log){
-                        recorde ? logger.log(cmd + '运行错误...') : console.log(cmd + '运行错误...');
+                    if(operation.log){
+                        operation.recorde ? logger.log('命令执行错误:'+cmd,'ERROR') : console.error('命令执行错误:'+cmd);
                     }
                 }
                 method && method();
             }
-            handler.stdout.on('data', stdotHandler);
-            handler.stderr.on('data', stderrHandler);
-            handler.on('exit', exitHandler);
+            childprocess.stdout.on('data', stdotHandler);
+            childprocess.stderr.on('data', stderrHandler);
+            childprocess.on('exit', exitHandler);
         }
 
         /** 
