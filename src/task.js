@@ -99,7 +99,7 @@ module.exports = class Task {
         var from = config.workpath["server-release"].from;
         var to = config.workpath["server-release"].to;
         utils.clearFolder(to);
-        utils.copyFolder(from, to);
+        utils.copyFolder(from, to,'.svn');
     }
 
     static async run(list, name) {

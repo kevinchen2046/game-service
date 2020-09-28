@@ -87,9 +87,10 @@ module.exports =
         * @param fromPath 复制源文件夹
         * @param toPath 目标文件夹
         */
-        static copyFolder(fromPath, toPath) {
+        static copyFolder(fromPath, toPath,filters) {
             var files = fs.readdirSync(fromPath);
             for (var fileName of files) {
+                if(filters&&filters.indexOf(filename)>=0) continue;
                 var path = fromPath + '/' + fileName;
                 if (fs.statSync(path).isDirectory()) {
                     if (!fs.existsSync(toPath + '/' + fileName)) {
