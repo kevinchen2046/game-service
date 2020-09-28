@@ -95,7 +95,8 @@ module.exports = function () {
     for (var file of files) {
         if (path.extname(file) != '.xls') continue;
         var stat=fs.statSync(config.workpath.excel + '/' + file);
-        if(cache[file]&&cache[file]==stat.ctime.toString()) continue;
+        var curtime=stat.ctime.toString().replace('GMT+0800 (中国标准时间)','');
+        if(cache[file]&&cache[file]==curtime) continue;
         var result = Generater.export(config.workpath.excel + '/' + file);
         for (var resclient of result.clients) {
             fs.writeFileSync(config.workpath["client-config"] + '/' + resclient.name + '.txt', resclient.content, 'utf-8');
@@ -104,7 +105,7 @@ module.exports = function () {
             fs.writeFileSync(config.workpath["server-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
             // fs.writeFileSync(config.workpath["server-release-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
         }
-        cache[file]=stat.ctime.toString();
+        cache[file]=curtime;
     }
     fs.writeFileSync(cachepath,JSON.stringify(cache));
     logger.log('导出表完成', 'LOG', 'config.log');

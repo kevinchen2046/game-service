@@ -86,14 +86,14 @@ module.exports = class Task {
 
     static async commitclientconfig() {
         logger.log('svn add client...');
-        await utils.runcmd(`svn add ${config.workpath["client-config"]}/resource/config/. --no-ignore --force`)
+        await utils.runcmd(`svn add ${config.workpath["client-config"]}/. --no-ignore --force`)
         logger.log('svn commit client...');
         await utils.runcmd(`svn commit ${config.workpath["client-config"]} -m 'build at ${Date.now()}'`)
     }
 
     static async commitserverconfig() {
         logger.log('svn add server...');
-        await utils.runcmd(`svn add ${config.workpath["server-config"]}/conftab/. --no-ignore --force`)
+        await utils.runcmd(`svn add ${config.workpath["server-config"]}/. --no-ignore --force`)
         logger.log('svn commit server...');
         await utils.runcmd(`svn commit ${config.workpath["server-config"]} -m 'build at ${Date.now()}'`)
     }
