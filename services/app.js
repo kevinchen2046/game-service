@@ -3,8 +3,8 @@ const { Worker, isMainThread, parentPort, workerData, threadId } = require('work
 if (isMainThread) {
     var serviceServer = require('./socket');
     var httpserver = require('./httpserver');
-    var config = require('./../src/config');
-    var logger = require('./../src/logger')
+    var config = require('./src/config');
+    var logger = require('./src/logger')
     logger.recorde = true;
    
     var taskstate = null;
@@ -42,8 +42,8 @@ if (isMainThread) {
         process.title = '西行记Web服务[允许跨域][不允许缓存][Client端口' + config.appport["client-service"] + '][服务端口' + config.appport["build-service"] + '][控制台端口' + config.appport["console-service"] + ']';
     }, 200);
 } else {
-    var task = require('./../src/task');
-    var logger = require('./../src/logger')
+    var task = require('./src/task');
+    var logger = require('./src/logger')
     logger.recorde = true;
     task.statechange = function () {
         parentPort.postMessage({
