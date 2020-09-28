@@ -1,7 +1,4 @@
 var ws = require('ws');
-var logger = require('./../src/logger')
-
-logger.recorde = true;
 
 var clients = [];
 
