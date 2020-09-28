@@ -74,28 +74,28 @@ module.exports = class Task {
         logger.log('svn add client...');
         await utils.runcmd(`svn add ${config.workpath["client"]}/. --no-ignore --force`)
         logger.log('svn commit client...');
-        await utils.runcmd(`svn commit ${config.workpath["client"]} -m 'build at ${Date.now()}'`)
+        await utils.runcmd(`svn commit ${config.workpath["client"]} -m 'build${Date.now()}'`)
     }
 
     static async commitserver() {
         logger.log('svn add server...');
         await utils.runcmd(`svn add ${config.workpath["server"]}/. --no-ignore --force`)
         logger.log('svn commit server...');
-        await utils.runcmd(`svn commit ${config.workpath["server"]} -m 'build at ${Date.now()}'`)
+        await utils.runcmd(`svn commit ${config.workpath["server"]} -m 'build${Date.now()}'`)
     }
 
     static async commitclientconfig() {
         logger.log('svn add client...');
         await utils.runcmd(`svn add ${config.workpath["client-config"]}/. --no-ignore --force`)
         logger.log('svn commit client...');
-        await utils.runcmd(`svn commit ${config.workpath["client-config"]} -m 'build at ${Date.now()}'`)
+        await utils.runcmd(`svn commit ${config.workpath["client-config"]} -m 'build${Date.now()}'`)
     }
 
     static async commitserverconfig() {
         logger.log('svn add server...');
         await utils.runcmd(`svn add ${config.workpath["server-config"]}/. --no-ignore --force`)
         logger.log('svn commit server...');
-        await utils.runcmd(`svn commit ${config.workpath["server-config"]} -m 'build at ${Date.now()}'`)
+        await utils.runcmd(`svn commit ${config.workpath["server-config"]} -m 'build${Date.now()}'`)
     }
 
     static async syncserver() {
