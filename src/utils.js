@@ -9,9 +9,9 @@ module.exports =
          * @param {Function} method 
          */
         static runCmd(operation, method) {
-            if(typeof operation =='string'){
-                operation={
-                    cmd:operation
+            if (typeof operation == 'string') {
+                operation = {
+                    cmd: operation
                 }
             }
             if (operation.log == undefined) operation.log = true;
@@ -20,18 +20,18 @@ module.exports =
             //var iconv = require('iconv-lite');
             var childprocess = childProcess.exec(operation.cmd, {
                 encoding: 'buffer',
-                timeout: operation.timeout?operation.timeout:0, /*子进程最长执行时间 */
+                timeout: operation.timeout ? operation.timeout : 0, /*子进程最长执行时间 */
                 maxBuffer: 1024 * 1024
             });
             function stdotHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));
-                if(operation.log){
+                if (operation.log) {
                     operation.recorde ? logger.log(data.toString()) : console.log(data.toString());
                 }
             }
             function stderrHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));	
-                if(operation.log){
+                if (operation.log) {
                     operation.recorde ? logger.log(data.toString()) : console.log(data.toString());
                 }
             }
@@ -39,9 +39,12 @@ module.exports =
                 childprocess.stdout.removeListener('data', stdotHandler);
                 childprocess.stderr.removeListener('data', stderrHandler);
                 childprocess.removeListener('exit', exitHandler);
+                childprocess.removeListener('error', exitHandler);
+                childprocess.removeListener('close', exitHandler);
+                childprocess.removeListener('disconnect', exitHandler);
                 if (code != 0) {
-                    if(operation.log){
-                        operation.recorde ? logger.log('命令执行错误:'+operation.cmd,'ERROR') : console.error('命令执行错误:'+operation.cmd);
+                    if (operation.log) {
+                        operation.recorde ? logger.log('命令执行错误:' + operation.cmd, 'ERROR') : console.error('命令执行错误:' + operation.cmd);
                     }
                 }
                 method && method();
@@ -49,6 +52,9 @@ module.exports =
             childprocess.stdout.on('data', stdotHandler);
             childprocess.stderr.on('data', stderrHandler);
             childprocess.on('exit', exitHandler);
+            childprocess.on('error', exitHandler);
+            childprocess.on('close', exitHandler);
+            childprocess.on('disconnect', exitHandler);
         }
 
         /** 
