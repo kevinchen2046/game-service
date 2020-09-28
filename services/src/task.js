@@ -52,22 +52,22 @@ module.exports = class Task {
 
     static async updateclientconfig() {
         logger.log('svn update client config...');
-        await utils.runcmd(`svn update ${config.workpath.client}/resource/config`);
+        await utils.runcmd(`svn update ${config.workpath['client-config']}/`);
     }
 
     static async updateserverconfig() {
         logger.log('svn update server config...');
-        await utils.runcmd(`svn update ${config.workpath.server}/conftab`);
+        await utils.runcmd(`svn update ${config.workpath['server-config']}/`);
     }
 
     static async updatexls() {
         logger.log('svn update xls...');
-        await utils.runcmd(`svn update ${config.workpath.excel}`);
+        await utils.runcmd(`svn update ${config.workpath.excel}/`);
     }
 
     static async updatproto() {
         logger.log('svn update proto...');
-        await utils.runcmd(`svn update ${config.workpath.proto}`);
+        await utils.runcmd(`svn update ${config.workpath.proto}/`);
     }
 
     static async commitclient() {

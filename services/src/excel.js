@@ -87,8 +87,8 @@ class Generater {
 
 module.exports = function () {
     logger.cleanfile('config.log');
-    utils.clearFolder(config.workpath["client-config"]);
-    utils.clearFolder(config.workpath["server-config"]);
+    // utils.clearFolder(config.workpath["client-config"]);
+    // utils.clearFolder(config.workpath["server-config"]);
     var cachepath=`${__dirname}/../../.configcache`;
     var cache = fs.existsSync(cachepath)?JSON.parse(fs.readFileSync(cachepath,'utf-8')):{};
     var files = fs.readdirSync(config.workpath.excel);
