@@ -93,7 +93,7 @@ module.exports = function () {
     var files = fs.readdirSync(config.workpath.excel);
     for (var file of files) {
         if (path.extname(file) != '.xls') continue;
-        var stat=fs.statSync(file);
+        var stat=fs.statSync(config.workpath.excel + '/' + file);
         if(cache[file]&&cache[file]==stat.ctime.toString()) continue;
         var result = Generater.export(config.workpath.excel + '/' + file);
         for (var resclient of result.clients) {
