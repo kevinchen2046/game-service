@@ -158,7 +158,7 @@ export default {
             this.ws.send(JSON.stringify({ build: 'state' }));
         }
         this.ws.onmessage = (msg) => {
-            console.log('recive message:',msg);
+            //console.log('recive message:',msg);
             var data = JSON.parse(msg.data);
             switch (data.type) {
                 case 'state':
@@ -172,7 +172,7 @@ export default {
     },
     methods: {
         update: function (data) {
-            console.log(data);
+            //console.log(data);
             this.disabled = false;
             this.task.config.isbuild = data.task.config.isrun;
             this.task.config.phase = data.task.config.phase;
@@ -190,6 +190,7 @@ export default {
                 this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
                 return;
             }
+            this.$refs.logger.clear();
             this.$notify({ message: '开始构建配置', type: 'success' });
             this.ws.send(JSON.stringify({ build: 'config' }));
         },
@@ -198,6 +199,7 @@ export default {
                 this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
                 return;
             }
+            this.$refs.logger.clear();
             this.$notify({ message: '开始构建协议', type: 'success' });
             this.ws.send(JSON.stringify({ build: 'proto' }));
         },
@@ -206,6 +208,7 @@ export default {
                 this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
                 return;
             }
+            this.$refs.logger.clear();
             this.$notify({ message: '开始构建客户端', type: 'warning' });
             this.ws.send(JSON.stringify({ build: 'client' }));
         },
@@ -214,6 +217,7 @@ export default {
                 this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
                 return;
             }
+            this.$refs.logger.clear();
             this.$notify({ message: '开始构建服务器', type: 'warning' });
             this.ws.send(JSON.stringify({ build: 'server' }));
         },
@@ -222,6 +226,7 @@ export default {
                 this.$notify({ message: '请等待任务构建完成...', type: 'warning' });
                 return;
             }
+            this.$refs.logger.clear();
             this.$notify({ message: '开始全部构建', type: 'warning' });
             this.ws.send(JSON.stringify({ build: 'all' }));
         },
