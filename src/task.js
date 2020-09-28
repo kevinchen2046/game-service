@@ -95,7 +95,14 @@ module.exports = class Task {
         })
     }
 
-    static async run(list,name) {
+    static async syncserver() {
+        var from = config.workpath["server-release"].from;
+        var to = config.workpath["server-release"].to;
+        utils.clearFolder(to);
+        utils.copyFolder(from, to);
+    }
+
+    static async run(list, name) {
         var list = Task._register[name];
         Task._taskstate[name].isrun = true;
         for (var i = 0; i < list.length; i++) {
@@ -113,15 +120,15 @@ module.exports = class Task {
         if (!Task._register) {
             Task._register = {
                 'all': [Task.updatexls, Task.updateclient, Task.updateserver, Task.exportconfig, Task.compileclient, Task.compileserver, Task.commitclient, Task.commitserver],
-                'config': [Task.updatexls, Task.updateclient, Task.updateserver, Task.exportconfig, Task.commitclient, Task.commitserver],
-                'proto': [Task.updatproto, Task.updateclient, Task.updateserver, Task.exportproto, Task.commitclient, Task.commitserver],
+                'config': [Task.updatexls, Task.updateclient, Task.updateserver, Task.exportconfig, Task.commitclient, Task.commitserver,Task.syncserver],
+                'proto': [Task.updatproto, Task.updateclient, Task.updateserver, Task.exportproto, Task.commitclient, Task.commitserver,Task.syncserver],
                 'client': [Task.updateclient, Task.compileclient],
-                'server': [Task.updateserver, Task.compileserver]
+                'server': [Task.updateserver, Task.compileserver,Task.syncserver]
             }
         }
         Task._curtask = cmdname;
         if (Task._register[cmdname]) {
-            Task.run(Task._register[cmdname],cmdname);
+            Task.run(Task._register[cmdname], cmdname);
         } else {
             switch (cmdname) {
                 case 'resource':

@@ -6,7 +6,10 @@ var config = {
         "excel": "",
         "client-config": "",
         "server-config": "",
-        "server-release-config": "",
+        "server-release": {
+            "from":"",
+            "to":""
+        },
         "proto":"",
         "client-proto":"",
         "server-proto":""
@@ -24,5 +27,4 @@ config = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`, 'utf-8'));
 // config.workpath.proto=`${__dirname}/../proto`;
 // config.workpath['client-proto']=`${__dirname}/../out/client`;
 // config.workpath['server-proto']=`${__dirname}/../out/server`;
-
 module.exports = config;

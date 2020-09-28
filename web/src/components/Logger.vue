@@ -6,7 +6,7 @@
         <el-button
           type="warning"
           icon="el-icon-delete"
-          style="margin-right:0px"
+          style="margin-right: 0px"
           size="mini"
           @click="clear()"
           circle
@@ -15,9 +15,17 @@
     </el-divider>
 
     <textarea
+      ref="textarea"
       rows="3"
       cols="20"
-      style="margin-right:10px;width:96%;height:860px;resize: none;outline:none;border:solid 1px #ccc;"
+      style="
+        margin-right: 10px;
+        width: 96%;
+        height: 860px;
+        resize: none;
+        outline: none;
+        border: solid 1px #ccc;
+      "
       readonly="readonly"
       v-model="logger"
     ></textarea>
@@ -29,12 +37,13 @@ export default {
   name: "Logger",
   data: function () {
     return {
-      logger: "....",
+      logger: "",
     };
   },
   methods: {
     add(content) {
-      this.logger += '\n' + decodeURI(content);
+      this.logger += decodeURI(content)+"\n";
+      this.$refs.textarea.scrollTop = this.$refs.textarea.scrollHeight;
     },
     clear() {
       this.logger = "";

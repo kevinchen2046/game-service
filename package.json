@@ -40,7 +40,10 @@
     "excel": "E:/project/xxj_dev/xls",
     "client-config": "E:/project/xxj_dev/client/resource/config",
     "server-config": "E:/project/xxj_dev/server_build/conftab",
-    "server-release-config": "C:/Users/Administrator/AppData/MixE/xxj_dev/game_version/conftab",
+    "server-release": {
+        "from":"E:/project/xxj_dev/server_build",
+        "to":"C:/Users/Administrator/AppData/MixE/xxj_dev/game_version"
+    },
     "proto": "E:/project/xxj_dev/proto",
     "client-proto": "E:/project/xxj_dev/client/libs/proto",
     "server-proto": "E:/project/xxj_dev/server/src/lib/proto"

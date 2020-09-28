@@ -5,7 +5,7 @@ module.exports =
     class Util {
         static runCmd(cmd, method, logrecorde) {
             if (logrecorde == undefined) logrecorde = true;
-            logrecorde ? logger.log('--------------执行命令:' + cmd + "--------------") : console.log('--------------执行命令:' + cmd + "--------------");
+            logrecorde ? logger.log('执行命令:' + cmd) : console.log('执行命令:' + cmd);
             var childProcess = require('child_process');
             //var iconv = require('iconv-lite');
             var handler = childProcess.exec(cmd, {
@@ -78,6 +78,26 @@ module.exports =
                 if (!fs.existsSync(fullP)) {
                     //console.log('create:',fullP);
                     fs.mkdirSync(fullP);
+                }
+            }
+        }
+
+        /** 
+        * 复制文件夹
+        * @param fromPath 复制源文件夹
+        * @param toPath 目标文件夹
+        */
+        static copyFolder(fromPath, toPath) {
+            var files = fs.readdirSync(fromPath);
+            for (var fileName of files) {
+                var path = fromPath + '/' + fileName;
+                if (fs.statSync(path).isDirectory()) {
+                    if (!fs.existsSync(toPath + '/' + fileName)) {
+                        fs.mkdirSync(toPath + '/' + fileName);
+                    }
+                    Util.copyFolder(path, toPath + '/' + fileName);
+                } else {
+                    fs.writeFileSync(toPath + '/' + fileName, fs.readFileSync(path));
                 }
             }
         }

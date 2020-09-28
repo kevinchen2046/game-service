@@ -98,7 +98,7 @@ module.exports = function () {
         }
         for (var resserver of result.servers) {
             fs.writeFileSync(config.workpath["server-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
-            fs.writeFileSync(config.workpath["server-release-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
+            // fs.writeFileSync(config.workpath["server-release-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
         }
     }
     logger.log('导出表完成', 'LOG', 'config.log');

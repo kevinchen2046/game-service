@@ -13,12 +13,13 @@
                 </el-divider>
 
                 <el-steps :active="task.config.phase" simple style="margin-top: 20px">
-                    <el-step title="更新XLS"></el-step>
-                    <el-step title="更新Client"></el-step>
-                    <el-step title="更新Server"></el-step>
-                    <el-step title="导出表"></el-step>
-                    <el-step title="提交到客户端"></el-step>
-                    <el-step title="提交到服务端"></el-step>
+                    <el-step title="更新X"></el-step>
+                    <el-step title="更新C"></el-step>
+                    <el-step title="更新S"></el-step>
+                    <el-step title="导出X"></el-step>
+                    <el-step title="提交C"></el-step>
+                    <el-step title="提交S"></el-step>
+                    <el-step title="同步S"></el-step>
                     <el-step title="结束"></el-step>
                 </el-steps>
                 <br/>
@@ -31,12 +32,13 @@
                 </el-divider>
 
                 <el-steps :active="task.proto.phase" simple style="margin-top: 20px">
-                    <el-step title="更新Protos"></el-step>
-                    <el-step title="更新Client"></el-step>
-                    <el-step title="更新Server"></el-step>
+                    <el-step title="更新P"></el-step>
+                    <el-step title="更新C"></el-step>
+                    <el-step title="更新S"></el-step>
                     <el-step title="生成"></el-step>
-                    <el-step title="提交到客户端"></el-step>
-                    <el-step title="提交到服务端"></el-step>
+                    <el-step title="提交C"></el-step>
+                    <el-step title="提交S"></el-step>
+                    <el-step title="同步S"></el-step>
                     <el-step title="结束"></el-step>
                 </el-steps>
                 <br/>
@@ -49,8 +51,8 @@
                 </el-divider>
 
                 <el-steps :active="task.client.phase" simple style="margin-top: 20px">
-                    <el-step title="更新Client"></el-step>
-                    <el-step title="编译"></el-step>
+                    <el-step title="更新C"></el-step>
+                    <el-step title="编译C"></el-step>
                     <el-step title="结束"></el-step>
                 </el-steps>
                 <br/>
@@ -63,8 +65,9 @@
                 </el-divider>
 
                 <el-steps :active="task.server.phase" simple style="margin-top: 20px">
-                    <el-step title="更新Server"></el-step>
-                    <el-step title="编译"></el-step>
+                    <el-step title="更新S"></el-step>
+                    <el-step title="编译S"></el-step>
+                    <el-step title="同步S"></el-step>
                     <el-step title="结束"></el-step>
                 </el-steps>
                 <br/>
@@ -77,14 +80,15 @@
                 </el-divider>
 
                 <el-steps :active="task.all.phase" simple style="margin-top: 20px">
-                    <el-step title="更新XLS"></el-step>
-                    <el-step title="更新Client"></el-step>
-                    <el-step title="更新Server"></el-step>
-                    <el-step title="导出表"></el-step>
-                    <el-step title="提交到Client"></el-step>
-                    <el-step title="提交到Server"></el-step>
-                    <el-step title="编译Client"></el-step>
-                    <el-step title="编译Server"></el-step>
+                    <el-step title="更新X"></el-step>
+                    <el-step title="更新C"></el-step>
+                    <el-step title="更新S"></el-step>
+                    <el-step title="导出X"></el-step>
+                    <el-step title="提交C"></el-step>
+                    <el-step title="提交S"></el-step>
+                    <el-step title="编译C"></el-step>
+                    <el-step title="编译S"></el-step>
+                    <el-step title="同步S"></el-step>
                     <el-step title="结束"></el-step>
                 </el-steps>
             </el-main>
