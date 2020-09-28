@@ -24,7 +24,7 @@ task.statechange = function () {
 }
 
 logger.addhandler = function (content, id) {
-    logger.log('log add:', content);
+    console.log('log add:', content);
     for (var ws of clients) {
         ws.send(JSON.stringify({
             type: 'log',
@@ -69,7 +69,7 @@ wss.on('connection', function (ws) {
             clients.splice(index, 1);
             logger.log('客户端已关闭.');
         }
-    })
+    });
 });
 
 utils.runCmd(`http-server ${config.workpath.client} --cors -c0 -p ${config.appport["client-service"]}`, null, false);
