@@ -148,7 +148,7 @@ module.exports = class Task {
                 case 'config':
                 case 'proto':
                 case 'resource':
-                    task.exec(msg.build);
+                    Task.exec(msg.build);
                     break;
                 case "state":
                     break;

@@ -1,3 +1,4 @@
+const cons = require('consolidate');
 const { Worker, isMainThread, parentPort, workerData, threadId } = require('worker_threads');
 
 if (isMainThread) {
@@ -7,13 +8,6 @@ if (isMainThread) {
     
     var taskstate = null;
     serviceServer.initialize(config);
-    serviceServer.onconnection((res) => {
-        taskstate && res.end(taskstate);
-    });
-    serviceServer.onmessage((res) => {
-        worker.postMessage(res.msg);
-        taskstate && res.end(taskstate);
-    });
     const worker = new Worker(__filename, {
         workerData: {}
     });
@@ -23,12 +17,17 @@ if (isMainThread) {
         }
         serviceServer.send(data);
     });
-    worker.on('error', (e) => {
-        console.error(e);
-    });
+    worker.on('error', (e) => {console.error(e);});
     worker.on('exit', (code) => {
         if (code !== 0)
             new Error(`工作线程使用退出码 ${code} 停止`)
+    });
+    serviceServer.onconnection((res) => {
+        taskstate && res.end(taskstate);
+    });
+    serviceServer.onmessage((res) => {
+        worker.postMessage(res.msg);
+        taskstate && res.end(taskstate);
     });
     httpserver(config);
     setTimeout(() => {
@@ -36,6 +35,7 @@ if (isMainThread) {
     }, 200);
 } else {
     var task = require('./../src/task');
+    
     task.statechange = function () {
         parentPort.postMessage({
             type: 'state',
