@@ -3,9 +3,10 @@ var logger = require('./logger');
 
 module.exports =
     class Util {
-        static runCmd(cmd, method, logrecorde) {
-            if (logrecorde == undefined) logrecorde = true;
-            logrecorde ? logger.log('执行命令:' + cmd) : console.log('执行命令:' + cmd);
+        static runCmd(cmd, method, log, recorde) {
+            if (log == undefined) log = true;
+            if (recorde == undefined) recorde = true;
+            recorde ? logger.log('执行命令:' + cmd) : console.log('执行命令:' + cmd);
             var childProcess = require('child_process');
             //var iconv = require('iconv-lite');
             var handler = childProcess.exec(cmd, {
@@ -15,18 +16,24 @@ module.exports =
             });
             function stdotHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));
-                logrecorde ? logger.log(data.toString()) : console.log(data.toString());
+                if(log){
+                    recorde ? logger.log(data.toString()) : console.log(data.toString());
+                }
             }
             function stderrHandler(data) {
                 //console.log(iconv.decode(data,'gbk'));	
-                logrecorde ? logger.log(data.toString()) : console.log(data.toString());
+                if(log){
+                    recorde ? logger.log(data.toString()) : console.log(data.toString());
+                }
             }
             function exitHandler(code) {
                 handler.stdout.removeListener('data', stdotHandler);
                 handler.stderr.removeListener('data', stderrHandler);
                 handler.removeListener('exit', exitHandler);
                 if (code != 0) {
-                    logrecorde ? logger.log(cmd + '运行错误...') : console.log(cmd + '运行错误...');
+                    if(log){
+                        recorde ? logger.log(cmd + '运行错误...') : console.log(cmd + '运行错误...');
+                    }
                 }
                 method && method();
             }
@@ -87,10 +94,10 @@ module.exports =
         * @param fromPath 复制源文件夹
         * @param toPath 目标文件夹
         */
-        static copyFolder(fromPath, toPath,filters) {
+        static copyFolder(fromPath, toPath, filters) {
             var files = fs.readdirSync(fromPath);
             for (var fileName of files) {
-                if(filters&&filters.indexOf(fileName)>=0) continue;
+                if (filters && filters.indexOf(fileName) >= 0) continue;
                 var path = fromPath + '/' + fileName;
                 if (fs.statSync(path).isDirectory()) {
                     if (!fs.existsSync(toPath + '/' + fileName)) {
