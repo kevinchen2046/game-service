@@ -16,7 +16,7 @@ module.exports =
             }
             if (operation.log == undefined) operation.log = true;
             if (operation.recorde == undefined) operation.recorde = true;
-            operation.recorde ? logger.log('执行命令:' + cmd) : console.log('执行命令:' + operation.cmd);
+            operation.recorde ? logger.log('执行命令:' + operation.cmd) : console.log('执行命令:' + operation.cmd);
             //var iconv = require('iconv-lite');
             var childprocess = childProcess.exec(operation.cmd, {
                 encoding: 'buffer',
@@ -41,7 +41,7 @@ module.exports =
                 childprocess.removeListener('exit', exitHandler);
                 if (code != 0) {
                     if(operation.log){
-                        operation.recorde ? logger.log('命令执行错误:'+cmd,'ERROR') : console.error('命令执行错误:'+cmd);
+                        operation.recorde ? logger.log('命令执行错误:'+operation.cmd,'ERROR') : console.error('命令执行错误:'+operation.cmd);
                     }
                 }
                 method && method();
