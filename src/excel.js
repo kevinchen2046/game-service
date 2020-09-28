@@ -103,7 +103,7 @@ module.exports = function () {
             fs.writeFileSync(config.workpath["server-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
             // fs.writeFileSync(config.workpath["server-release-config"] + '/' + resserver.name + '.txt', resserver.content, 'utf-8');
         }
-        cache[file].time=stat.ctime.toString();
+        cache[file]=stat.ctime.toString();
     }
     fs.writeFileSync(`${__dirname}/../.configcache`,JSON.stringify(cache));
     logger.log('导出表完成', 'LOG', 'config.log');
