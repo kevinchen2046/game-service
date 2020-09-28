@@ -37,7 +37,7 @@ if (isMainThread) {
 } else {
     var task = require('./../src/task');
     task.statechange = function () {
-        mainWorker.postMessage({
+        parentPort.postMessage({
             type: 'state',
             task: task._taskstate,
         });
@@ -47,7 +47,7 @@ if (isMainThread) {
         task.onmessage(data);
     });
 
-    mainWorker.postMessage({
+    parentPort.postMessage({
         type: 'state',
         task: task._taskstate,
     });
