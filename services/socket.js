@@ -17,7 +17,7 @@ function syscState(ws) {
 }
 
 task.statechange = function () {
-    logger.log('task statechange:', clients.length);
+    console.log('task statechange:', clients.length);
     for (var ws of clients) {
         syscState(ws);
     }
@@ -38,12 +38,12 @@ wss.on('error', (ws) => {
     var index = clients.indexOf(ws);
     if (index >= 0) {
         clients.splice(index, 1);
-        logger.log('客户端已关闭.');
+        console.log('客户端已关闭.');
     }
 })
 
 wss.on('connection', function (ws) {
-    logger.log('客户端连接...');
+    console.log('客户端已连接...');
     clients.push(ws);
     syscState(ws);
     ws.on('message', function (message) {
@@ -67,7 +67,7 @@ wss.on('connection', function (ws) {
         var index = clients.indexOf(ws);
         if (index >= 0) {
             clients.splice(index, 1);
-            logger.log('客户端已关闭.');
+            console.log('客户端已关闭.');
         }
     });
 });
