@@ -46,4 +46,9 @@ if (isMainThread) {
     parentPort.on('message', (data) => {
         task.onmessage(data);
     });
+
+    mainWorker.postMessage({
+        type: 'state',
+        task: task._taskstate,
+    });
 }
