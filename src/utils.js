@@ -25,16 +25,10 @@ module.exports =
                 maxBuffer: 1024 * 1024
             });
             function stdotHandler(data) {
-                //console.log(iconv.decode(data,'gbk'));
-                if (operation.log) {
-                    logout(data.toString())
-                }
+                operation.log&&logout(data.toString())
             }
             function stderrHandler(data) {
-                //console.log(iconv.decode(data,'gbk'));	
-                if (operation.log) {
-                    logout(data.toString())
-                }
+                operation.log&&logout(data.toString())
             }
             function exitHandler(code) {
                 childprocess.stdout.removeListener('data', stdotHandler);
@@ -49,7 +43,7 @@ module.exports =
                     }
                 }
                 method && method();
-                logout('结束命令执行:' + operation.cmd);
+                logout('结束命令执行:' + operation.cmd+', code:'+code);
             }
             childprocess.stdout.on('data', stdotHandler);
             childprocess.stderr.on('data', stderrHandler);
