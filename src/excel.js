@@ -96,6 +96,7 @@ module.exports = function () {
         if (path.extname(file) != '.xls') continue;
         var stat=fs.statSync(config.workpath.excel + '/' + file);
         var curtime=stat.ctime.toString().replace('GMT+0800 (中国标准时间)','');
+        logger.log(`${cache[file]}==${curtime}`)
         if(cache[file]&&cache[file]==curtime) continue;
         var result = Generater.export(config.workpath.excel + '/' + file);
         for (var resclient of result.clients) {
