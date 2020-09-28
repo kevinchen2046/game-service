@@ -8,49 +8,52 @@ module.exports =
          * @param {cmd:string,timeout:number,log:boolean, recorde:boolean} operation 
          * @param {Function} method 
          */
-        static runCmd(operation, method) {
-            if (typeof operation == 'string') {
-                operation = {
-                    cmd: operation
-                }
-            }
-            if (operation.log == undefined) operation.log = true;
-            if (operation.recorde == undefined) operation.recorde = true;
-            var logout=operation.recorde ? logger.log:console.log;
-            logout('开始执行命令:' + operation.cmd)
-            //var iconv = require('iconv-lite');
-            var childprocess = childProcess.exec(operation.cmd, {
-                encoding: 'buffer',
-                timeout: operation.timeout ? operation.timeout : 0, /*子进程最长执行时间 */
-                maxBuffer: 1024 * 1024
-            });
-            function stdotHandler(data) {
-                operation.log&&logout(data.toString())
-            }
-            function stderrHandler(data) {
-                operation.log&&logout(data.toString())
-            }
-            function exitHandler(code) {
-                childprocess.stdout.removeListener('data', stdotHandler);
-                childprocess.stderr.removeListener('data', stderrHandler);
-                childprocess.removeListener('exit', exitHandler);
-                childprocess.removeListener('error', exitHandler);
-                childprocess.removeListener('close', exitHandler);
-                childprocess.removeListener('disconnect', exitHandler);
-                if (code != 0) {
-                    if (operation.log) {
-                        logout('命令执行错误:' + operation.cmd, 'ERROR');
+        static async runcmd(operation, method) {
+            return new Promise((reslove, reject) => {
+                if (typeof operation == 'string') {
+                    operation = {
+                        cmd: operation
                     }
                 }
-                method && method();
-                logout('结束命令执行:' + operation.cmd+', code:'+code);
-            }
-            childprocess.stdout.on('data', stdotHandler);
-            childprocess.stderr.on('data', stderrHandler);
-            childprocess.on('exit', exitHandler);
-            childprocess.on('error', exitHandler);
-            childprocess.on('close', exitHandler);
-            childprocess.on('disconnect', exitHandler);
+                if (operation.log == undefined) operation.log = true;
+                if (operation.recorde == undefined) operation.recorde = true;
+                var logout = operation.recorde ? logger.log : console.log;
+                logout('开始执行命令:' + operation.cmd)
+                //var iconv = require('iconv-lite');
+                var childprocess = childProcess.exec(operation.cmd, {
+                    encoding: 'buffer',
+                    timeout: operation.timeout ? operation.timeout : 0, /*子进程最长执行时间 */
+                    maxBuffer: 1024 * 1024
+                });
+                function stdotHandler(data) {
+                    operation.log && logout(data.toString())
+                }
+                function stderrHandler(data) {
+                    operation.log && logout(data.toString())
+                }
+                function exitHandler(code) {
+                    childprocess.stdout.removeListener('data', stdotHandler);
+                    childprocess.stderr.removeListener('data', stderrHandler);
+                    childprocess.removeListener('exit', exitHandler);
+                    childprocess.removeListener('error', exitHandler);
+                    childprocess.removeListener('close', exitHandler);
+                    childprocess.removeListener('disconnect', exitHandler);
+                    if (code != 0) {
+                        if (operation.log) {
+                            logout('命令执行错误:' + operation.cmd, 'ERROR');
+                        }
+                    }
+                    method && method();
+                    logout('结束命令执行:' + operation.cmd + ', code:' + code);
+                    reslove();
+                }
+                childprocess.stdout.on('data', stdotHandler);
+                childprocess.stderr.on('data', stderrHandler);
+                childprocess.on('exit', exitHandler);
+                childprocess.on('error', exitHandler);
+                childprocess.on('close', exitHandler);
+                childprocess.on('disconnect', exitHandler);
+            })
         }
 
         /** 

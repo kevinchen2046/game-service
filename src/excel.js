@@ -89,7 +89,8 @@ module.exports = function () {
     logger.cleanfile('config.log');
     utils.clearFolder(config.workpath["client-config"]);
     utils.clearFolder(config.workpath["server-config"]);
-    var cache = fs.existsSync(`${__dirname}/../.configcache`)?JSON.parse(fs.readFileSync(`${__dirname}/../.configcache`,'utf-8')):{};
+    var cachepath=`${__dirname}/../.configcache`;
+    var cache = fs.existsSync(cachepath)?JSON.parse(fs.readFileSync(cachepath,'utf-8')):{};
     var files = fs.readdirSync(config.workpath.excel);
     for (var file of files) {
         if (path.extname(file) != '.xls') continue;
@@ -105,6 +106,6 @@ module.exports = function () {
         }
         cache[file]=stat.ctime.toString();
     }
-    fs.writeFileSync(`${__dirname}/../.configcache`,JSON.stringify(cache));
+    fs.writeFileSync(cachepath,JSON.stringify(cache));
     logger.log('导出表完成', 'LOG', 'config.log');
 }

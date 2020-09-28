@@ -145,7 +145,7 @@ module.exports = async function () {
         utils.createFolder(`${config["workpath"]["client-proto"]}`);
         fs.writeFileSync(`${config["workpath"]["client-proto"]}/proto.d.ts`, filets);
         fs.writeFileSync(`${config["workpath"]["client-proto"]}/proto.js`, filejs.replace('//#Server\r\nexports.proto = proto;',''))
-        utils.runCmd(`uglifyjs ${config["workpath"]["client-proto"]}/proto.js -o ${config["workpath"]["client-proto"]}/proto.min.js`, () => {
+        utils.runcmd(`uglifyjs ${config["workpath"]["client-proto"]}/proto.js -o ${config["workpath"]["client-proto"]}/proto.min.js`, () => {
             logger.log('写入服务端协议...')
             utils.createFolder(`${config["workpath"]["server-proto"]}`);
             fs.writeFileSync(`${config["workpath"]["server-proto"]}/proto.d.ts`, filets);
