@@ -60,6 +60,20 @@ module.exports = class Task {
         });
     }
 
+    static async updateclientconfig() {
+        return new Promise((reslove) => {
+            logger.log('svn update client config...');
+            utils.runCmd(`svn update ${config.workpath.client}/resource/config`, reslove);
+        });
+    }
+
+    static async updateserverconfig() {
+        return new Promise((reslove) => {
+            logger.log('svn update server config...');
+            utils.runCmd(`svn update ${config.workpath.server}/conftab`, reslove);
+        });
+    }
+
     static async updatexls() {
         return new Promise((reslove) => {
             logger.log('svn update xls...');
@@ -77,9 +91,9 @@ module.exports = class Task {
     static async commitclient() {
         return new Promise((reslove) => {
             logger.log('svn add client...');
-            utils.runCmd(`svn add ${config.workpath["client-config"]}/. --no-ignore --force`, () => {
+            utils.runCmd(`svn add ${config.workpath["client"]}/. --no-ignore --force`, () => {
                 logger.log('svn commit client...');
-                utils.runCmd(`svn commit ${config.workpath["client-config"]} -m 'build at ${Date.now()}'`, () => {
+                utils.runCmd(`svn commit ${config.workpath["client"]} -m 'build at ${Date.now()}'`, () => {
                     reslove();
                 })
             })
@@ -89,7 +103,31 @@ module.exports = class Task {
     static async commitserver() {
         return new Promise((reslove) => {
             logger.log('svn add server...');
-            utils.runCmd(`svn add ${config.workpath["server-config"]}/. --no-ignore --force`, () => {
+            utils.runCmd(`svn add ${config.workpath["server"]}/. --no-ignore --force`, () => {
+                logger.log('svn commit server...');
+                utils.runCmd(`svn commit ${config.workpath["server"]} -m 'build at ${Date.now()}'`, () => {
+                    reslove();
+                })
+            })
+        })
+    }
+
+    static async commitclientconfig() {
+        return new Promise((reslove) => {
+            logger.log('svn add client...');
+            utils.runCmd(`svn add ${config.workpath["client-config"]}/resource/config/. --no-ignore --force`, () => {
+                logger.log('svn commit client...');
+                utils.runCmd(`svn commit ${config.workpath["client-config"]} -m 'build at ${Date.now()}'`, () => {
+                    reslove();
+                })
+            })
+        })
+    }
+
+    static async commitserverconfig() {
+        return new Promise((reslove) => {
+            logger.log('svn add server...');
+            utils.runCmd(`svn add ${config.workpath["server-config"]}/conftab/. --no-ignore --force`, () => {
                 logger.log('svn commit server...');
                 utils.runCmd(`svn commit ${config.workpath["server-config"]} -m 'build at ${Date.now()}'`, () => {
                     reslove();
@@ -123,7 +161,7 @@ module.exports = class Task {
         if (!Task._register) {
             Task._register = {
                 'all': [Task.updatexls, Task.updateclient, Task.updateserver, Task.exportconfig, Task.compileclient, Task.compileserver, Task.commitclient, Task.commitserver],
-                'config': [Task.updatexls, Task.updateclient, Task.updateserver, Task.exportconfig, Task.commitclient, Task.commitserver,Task.syncserver],
+                'config': [Task.updatexls, Task.updateclientconfig, Task.updateserverconfig, Task.exportconfig, Task.commitclientconfig, Task.commitserverconfig,Task.syncserver],
                 'proto': [Task.updatproto, Task.updateclient, Task.updateserver, Task.exportproto, Task.commitclient, Task.commitserver,Task.syncserver],
                 'client': [Task.updateclient, Task.compileclient],
                 'server': [Task.updateserver, Task.compileserver,Task.syncserver]
