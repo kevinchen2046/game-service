@@ -138,4 +138,23 @@ module.exports = class Task {
         }
         Task._curtask = '';
     }
+
+    static onmessage(msg) {
+        try {
+            switch (msg.build) {
+                case 'all':
+                case 'client':
+                case 'server':
+                case 'config':
+                case 'proto':
+                case 'resource':
+                    task.exec(msg.build);
+                    break;
+                case "state":
+                    break;
+            }
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
 }

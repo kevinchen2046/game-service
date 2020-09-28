@@ -6,7 +6,7 @@
   "scripts": {
     "config": "node -e \"require('./src/excel')()\"",
     "proto": "node -e \"require('./src/proto')()\"",
-    "start": "node ./services/socket"
+    "start": "node --experimental-worker ./services/app"
   },
   "main": "index.js",
   "dependencies": {
