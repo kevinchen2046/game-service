@@ -90,7 +90,7 @@ module.exports =
         static copyFolder(fromPath, toPath,filters) {
             var files = fs.readdirSync(fromPath);
             for (var fileName of files) {
-                if(filters&&filters.indexOf(filename)>=0) continue;
+                if(filters&&filters.indexOf(fileName)>=0) continue;
                 var path = fromPath + '/' + fileName;
                 if (fs.statSync(path).isDirectory()) {
                     if (!fs.existsSync(toPath + '/' + fileName)) {
