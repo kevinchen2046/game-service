@@ -114,7 +114,7 @@ module.exports = class Task {
             await list[i]();
         }
         Task._taskstate[name].isrun = false;
-        Task._taskstate[name].phase = list.length;
+        Task._taskstate[name].phase = list.length+1;
         Task.statechange && Task.statechange();
     }
 
