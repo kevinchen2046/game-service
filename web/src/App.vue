@@ -90,7 +90,7 @@
             </el-main>
 
             <el-footer style="text-align: center;color: #888888;">
-                <WordLamp/>
+                <!--<WordLamp/>-->
             </el-footer>
         </el-container>
         <el-aside width="500px">
@@ -102,14 +102,14 @@
 <script>
 import Title from './components/Title.vue'
 import Logger from './components/Logger.vue'
-import WordLamp from './components/WordLamp.vue'
+//import WordLamp from './components/WordLamp.vue'
 // import Util from './js/utils';
 import dataconfig from '@/static/web.config.json';
 
 export default {
   name: 'App',
   components: {
-    Title,Logger,WordLamp
+    Title,Logger
   },
   data:function(){return {
         disabled: true,

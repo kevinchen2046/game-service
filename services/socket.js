@@ -43,25 +43,34 @@ wss.on('error', (ws) => {
 })
 
 wss.on('connection', function (ws) {
-    console.log('客户端已连接...');
-    clients.push(ws);
-    syscState(ws);
-    ws.on('message', function (message) {
-        var msg = JSON.parse(message);
-        logger.log(message);
-        switch (msg.build) {
-            case 'all':
-            case 'client':
-            case 'server':
-            case 'config':
-            case 'proto':
-            case 'resource':
-                task.exec(msg.build)
-                break;
-            case "state":
-                break;
-        }
+    try {
+        console.log('客户端已连接...');
+        clients.push(ws);
         syscState(ws);
+    } catch (e) {
+        console.error(e.message);
+    }
+
+    ws.on('message', function (message) {
+        try {
+            var msg = JSON.parse(message);
+            logger.log(message);
+            switch (msg.build) {
+                case 'all':
+                case 'client':
+                case 'server':
+                case 'config':
+                case 'proto':
+                case 'resource':
+                    task.exec(msg.build)
+                    break;
+                case "state":
+                    break;
+            }
+            syscState(ws);
+        } catch (e) {
+            console.error(e.message);
+        }
     });
     ws.on('close', () => {
         var index = clients.indexOf(ws);
