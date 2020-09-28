@@ -17,13 +17,14 @@ function syscState(ws) {
 }
 
 task.statechange = function () {
-    console.log('task statechange:', clients.length);
+    logger.log('task statechange:', clients.length);
     for (var ws of clients) {
         syscState(ws);
     }
 }
+
 logger.addhandler = function (content, id) {
-    console.log('log add:', content);
+    logger.log('log add:', content);
     for (var ws of clients) {
         ws.send(JSON.stringify({
             type: 'log',
@@ -33,28 +34,21 @@ logger.addhandler = function (content, id) {
     }
 }
 
-wss.on('close', (ws) => {
-    var index = clients.indexOf(ws);
-    if (index >= 0) {
-        clients.splice(index, 1);
-        console.log('client close.');
-    }
-})
 wss.on('error', (ws) => {
     var index = clients.indexOf(ws);
     if (index >= 0) {
         clients.splice(index, 1);
-        console.log('client close.');
+        logger.log('客户端已关闭.');
     }
 })
 
 wss.on('connection', function (ws) {
-    console.log('client connected');
-    syscState(ws);
+    logger.log('客户端连接...');
     clients.push(ws);
+    syscState(ws);
     ws.on('message', function (message) {
         var msg = JSON.parse(message);
-        console.log(message);
+        logger.log(message);
         switch (msg.build) {
             case 'all':
             case 'client':
@@ -69,6 +63,13 @@ wss.on('connection', function (ws) {
         }
         syscState(ws);
     });
+    ws.on('close', () => {
+        var index = clients.indexOf(ws);
+        if (index >= 0) {
+            clients.splice(index, 1);
+            logger.log('客户端已关闭.');
+        }
+    })
 });
 
 utils.runCmd(`http-server ${config.workpath.client} --cors -c0 -p ${config.appport["client-service"]}`, null, false);
